@@ -36,11 +36,7 @@ import bgImage from "assets/images/city-profile.jpg";
 function Author() {
     return (
         <>
-            <DefaultNavbar
-                routes={routes}
-                transparent
-                light
-            />
+          
             <MKBox bgColor="white">
                 <MKBox
                     minHeight="25rem"

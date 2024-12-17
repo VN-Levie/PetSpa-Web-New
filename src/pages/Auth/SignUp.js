@@ -35,11 +35,7 @@ function MySignUp() {
 
     return (
         <>
-            <DefaultNavbar
-                routes={routes}
-                transparent
-                light
-            />
+
             <MKBox
                 position="absolute"
                 top={0}
