@@ -1,28 +1,13 @@
 /**
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/**
- * The base typography styles for the Material Kit 2 React.
+ * The base typography styles for the PetSpa React.
  * You can add new typography style using this file.
- * You can customized the typography styles for the entire Material Kit 2 React using thie file.
+ * You can customized the typography styles for the entire PetSpa React using thie file.
  */
 
-// Material Kit 2 React Base Styles
+
 import colors from "assets/theme/base/colors";
 
-// Material Kit 2 React Helper Functions
+
 import pxToRem from "assets/theme/functions/pxToRem";
 
 const { dark } = colors;
