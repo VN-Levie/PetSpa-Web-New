@@ -1,29 +1,25 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import { useAuth } from "contexts/AuthContext";
 // react-router-dom components
 import { Link } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
-import MuiLink from "@mui/material/Link";
+import Switch from "@mui/material/Switch";
 
 // @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import GoogleIcon from "@mui/icons-material/Google";
 
 //  components
 import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
-import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
+import MKInput from "components/MKInput";
+import MKTypography from "components/MKTypography";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import SimpleFooter from "examples/Footers/SimpleFooter";
+import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 import routes from "routes";
 
@@ -35,7 +31,7 @@ function MySignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-
+    const { login } = useAuth();
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -72,17 +68,11 @@ function MySignIn() {
             console.log(data);
 
             if (response.ok) {
-                localStorage.setItem("token", data.data.token);
-                localStorage.setItem("user", JSON.stringify(data.data));
-                if (rememberMe) {
-                    localStorage.setItem("refreshToken", data.data.refreshToken);
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login successful',
-                    text: data.message,
+                login(data.data); // Cập nhật trạng thái đăng nhập
+
+                Swal.fire("Success", "Login successful", "success").then(() => {
+                    navigate("/auth/profile");
                 });
-                navigate("/auth/profile");
             } else {
                 Swal.fire({
                     icon: 'error',
