@@ -21,10 +21,11 @@
   ],
   "rules": {
     "prettier/prettier": [
-      "error",
+      "off",
       {
         "endOfLine": "auto"
-      }
+      },
+      { "printWidth": 120 }
     ],
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [

@@ -49,7 +49,7 @@ import bgImage from "assets/images/banner3.png";
 function Presentation() {
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <DefaultNavbar routes={routes} sticky center="false" />
       <MKBox
         minHeight="75vh"
         width="100%"
