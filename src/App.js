@@ -12,10 +12,10 @@ import Presentation from "layouts/pages/presentation";
 
 import routes from "routes";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
+import { AuthProvider, useAuth } from "contexts/AuthContext";
 export default function App() {
   const { pathname } = useLocation();
-
+  const user = useAuth();
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -37,15 +37,17 @@ export default function App() {
   console.log("ok ok");
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <DefaultNavbar routes={routes} sticky center="false" />
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="/presentation" element={<Presentation />} />
-        <Route path="*" element={<Navigate to="/presentation" />} />
-      </Routes>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <DefaultNavbar routes={routes} sticky center="false" />
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="/" element={<Presentation />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
 
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
