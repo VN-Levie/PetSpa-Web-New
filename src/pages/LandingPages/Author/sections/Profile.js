@@ -1,19 +1,3 @@
-/*
-=========================================================
-* 
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
@@ -27,7 +11,7 @@ import MKTypography from "components/MKTypography";
 // Images
 import profilePicture from "assets/images/bruce-mars.jpg";
 
-function Profile() {
+function Profile(user) {
   return (
     <MKBox component="section" py={{ xs: 6, sm: 12 }}>
       <Container>
@@ -38,8 +22,12 @@ function Profile() {
           <Grid container justifyContent="center" py={6}>
             <Grid item xs={12} md={7} mx={{ xs: "auto", sm: 6, md: 1 }}>
               <MKBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                <MKTypography variant="h3">Michael Roven</MKTypography>
+                <MKTypography variant="h3">
+                  Bruce Mars sds
+
+                </MKTypography>
                 <MKButton variant="outlined" color="info" size="small">
+
                   Follow
                 </MKButton>
               </MKBox>

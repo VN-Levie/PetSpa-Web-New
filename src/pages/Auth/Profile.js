@@ -1,17 +1,3 @@
-/*
-=========================================================
-* 
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -19,24 +5,36 @@ import Card from "@mui/material/Card";
 //  components
 import MKBox from "components/MKBox";
 
-//  examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 // Author page sections
-import Profile from "pages/LandingPages/Author/sections/Profile";
+import ProfileSection from "pages/LandingPages/Author/sections/Profile";
 import Posts from "pages/LandingPages/Author/sections/Posts";
 import Contact from "pages/LandingPages/Author/sections/Contact";
 import Footer from "pages/LandingPages/Author/sections/Footer";
+import { useAuth } from "contexts/AuthContext";
 
-// Routes
-import routes from "routes";
 
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 // Images
 import bgImage from "assets/images/city-profile.jpg";
 
+// 
 function Author() {
+
+    const { user, loading } = useAuth();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!loading && !user) {
+            navigate("/auth/sign-in");
+        }
+    }, [user, loading, navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>; // Hoặc thêm spinner
+    }
     return (
         <>
-          
+
             <MKBox bgColor="white">
                 <MKBox
                     minHeight="25rem"
@@ -64,7 +62,7 @@ function Author() {
                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                     }}
                 >
-                    <Profile />
+                    <ProfileSection />
                     <Posts />
                 </Card>
                 <Contact />

@@ -21,26 +21,26 @@ export default {
   socials: [
     {
       icon: <FacebookIcon />,
-      link: "#",
+      link: "#FB",
     },
     {
       icon: <TwitterIcon />,
-      link: "#",
+      link: "#Twitter",
     },
     {
       icon: <GitHubIcon />,
-      link: "#",
+      link: "#GitHub",
     },
     {
       icon: <YouTubeIcon />,
-      link: "#",
+      link: "#YouTube",
     },
   ],
   menus: [
     {
       name: "company",
       items: [
-        { name: "about us", href: "#" },
+        { name: "about us", href: "#About" },
       ],
     },
     {

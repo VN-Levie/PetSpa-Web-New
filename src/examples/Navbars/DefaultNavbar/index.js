@@ -522,27 +522,7 @@ DefaultNavbar.propTypes = {
   brand: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.shape).isRequired,
   transparent: PropTypes.bool,
-  light: PropTypes.bool,
-  action: PropTypes.oneOfType([
-    PropTypes.oneOf([null]), // added null as a valid type
-    PropTypes.shape({
-      type: PropTypes.oneOf(["external", "internal"]).isRequired,
-      route: PropTypes.string.isRequired,
-      color: PropTypes.oneOf([
-        "primary",
-        "secondary",
-        "info",
-        "success",
-        "warning",
-        "error",
-        "dark",
-        "light",
-        "default",
-        "white",
-      ]),
-      label: PropTypes.string.isRequired,
-    }),
-  ]),
+  light: PropTypes.bool, 
   sticky: PropTypes.bool,
   relative: PropTypes.bool,
   center: PropTypes.bool,

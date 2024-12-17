@@ -29,10 +29,6 @@ import routes from "routes";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function MySignUp() {
-    const [rememberMe, setRememberMe] = useState(false);
-
-    const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
     return (
         <>
 

@@ -1,7 +1,7 @@
+import { useAuth } from "contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useAuth } from "contexts/AuthContext";
 // react-router-dom components
 import { Link } from "react-router-dom";
 
@@ -19,9 +19,7 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 import SimpleFooter from "examples/Footers/SimpleFooter";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
-import routes from "routes";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
@@ -71,7 +69,7 @@ function MySignIn() {
                 login(data.data); // Cập nhật trạng thái đăng nhập
 
                 Swal.fire("Success", "Login successful", "success").then(() => {
-                    navigate("/auth/profile");
+                    // navigate("/auth/profile");
                 });
             } else {
                 Swal.fire({

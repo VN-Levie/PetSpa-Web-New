@@ -6,25 +6,16 @@ import theme from "assets/theme";
 import Presentation from "layouts/pages/presentation";
 import { AuthProvider, useAuth } from "contexts/AuthContext";
 import { getRoutes } from "routes";
-
-
-import routes from "routes";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import { AuthProvider, useAuth } from "contexts/AuthContext";
-export default function App() {
-  const { pathname } = useLocation();
-  const user = useAuth();
-  // Setting page scroll to 0 when changing the route
-  useEffect(() => {
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-  }, [pathname]);
 
+function AppRoutes() {
+  const { user, loading } = useAuth();
+  const routes = getRoutes(user);
 
   const mapRoutes = (allRoutes) =>
     allRoutes.map((route, index) => {
       if (route.collapse) {
-        return getRoutes(route.collapse);
+        return mapRoutes(route.collapse);
       }
 
       if (route.route && route.component) {
@@ -33,22 +24,42 @@ export default function App() {
 
       return null;
     });
-  console.log("ok ok");
+
+  if (!loading) {
+
+    return (
+      <Routes>
+        {mapRoutes(routes)}
+        <Route path="/" element={<Presentation />} />
+        <Route path="*" element={<Navigate to={user ? "/profile" : "/auth/sign-in"} />} />
+      </Routes>
+    );
+  }
+}
+
+
+function AppNavbar() {
+  const { user } = useAuth();
+  const routes = getRoutes(user);
+  return <DefaultNavbar routes={routes} sticky center={false} />;
+}
+
+export default function App() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+  }, [pathname]);
 
   return (
-
     <AuthProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <DefaultNavbar routes={routes} sticky center="false" />
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="/" element={<Presentation />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-
-
+        <AppNavbar />
+        <AppRoutes />
       </ThemeProvider>
     </AuthProvider>
+
   );
 }
