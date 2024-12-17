@@ -19,6 +19,7 @@ import MuiLink from "@mui/material/Link";
 //  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
+// eslint-disable-next-line no-unused-vars
 import MKButton from "components/MKButton";
 
 import DefaultNavbarDropdown from "examples/Navbars/DefaultNavbar/DefaultNavbarDropdown";
@@ -26,6 +27,7 @@ import DefaultNavbarMobile from "examples/Navbars/DefaultNavbar/DefaultNavbarMob
 
 import breakpoints from "assets/theme/base/breakpoints";
 
+// eslint-disable-next-line no-unused-vars
 function DefaultNavbar({ brand, routes, transparent, light, action, sticky, relative, center }) {
   const [dropdown, setDropdown] = useState("");
   const [dropdownEl, setDropdownEl] = useState("");
@@ -471,40 +473,6 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
           >
             {renderNavbarItems}
           </MKBox>
-          <MKBox ml={{ xs: "auto", lg: 0 }}>
-            {action &&
-              (action.type === "internal" ? (
-                <MKButton
-                  component={Link}
-                  to={action.route}
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ) : (
-                <MKButton
-                  component="a"
-                  href={action.route}
-                  target="_blank"
-                  rel="noreferrer"
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ))}
-          </MKBox>
           <MKBox
             display={{ xs: "inline-block", lg: "none" }}
             lineHeight={0}
@@ -537,8 +505,8 @@ DefaultNavbar.defaultProps = {
   brand: "Pet Spa",
   transparent: false,
   light: false,
-  action: false,
-  sticky: true,
+  action: null, // changed from false to null
+  sticky: false,
   relative: false,
   center: true,
 };
@@ -550,7 +518,7 @@ DefaultNavbar.propTypes = {
   transparent: PropTypes.bool,
   light: PropTypes.bool,
   action: PropTypes.oneOfType([
-    PropTypes.bool,
+    PropTypes.oneOf([null]), // added null as a valid type
     PropTypes.shape({
       type: PropTypes.oneOf(["external", "internal"]).isRequired,
       route: PropTypes.string.isRequired,

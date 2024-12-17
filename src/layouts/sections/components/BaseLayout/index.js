@@ -42,7 +42,7 @@ function BaseLayout({ breadcrumb, title, children }) {
             type: "external",
             route: "https://www.creative-tim.com/product/material-kit-react",
             label: "free download",
-            color: "info",
+            color: "dark",
           }}
           transparent
           relative

@@ -49,7 +49,7 @@ function AboutUs() {
           type: "external",
           route: "https://www.creative-tim.com/product/material-kit-react",
           label: "free download",
-          color: "default",
+          color: "info",
         }}
         transparent
         light
