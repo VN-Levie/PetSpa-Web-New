@@ -4,9 +4,7 @@
  * You can customized the box-shadow for the entire PetSpa React using thie file.
  */
 
-
 import colors from "assets/theme/base/colors";
-
 
 import boxShadow from "assets/theme/functions/boxShadow";
 

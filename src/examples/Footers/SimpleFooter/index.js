@@ -10,7 +10,6 @@ import Icon from "@mui/material/Icon";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-
 import typography from "assets/theme/base/typography";
 
 function SimpleFooter({ company, links, light }) {

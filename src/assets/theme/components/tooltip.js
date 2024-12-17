@@ -1,11 +1,9 @@
 // @mui material components
 import Fade from "@mui/material/Fade";
 
-
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
 import borders from "assets/theme/base/borders";
-
 
 import pxToRem from "assets/theme/functions/pxToRem";
 

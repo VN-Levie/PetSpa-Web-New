@@ -4,9 +4,7 @@
  * You can customized the typography styles for the entire PetSpa React using thie file.
  */
 
-
 import colors from "assets/theme/base/colors";
-
 
 import pxToRem from "assets/theme/functions/pxToRem";
 

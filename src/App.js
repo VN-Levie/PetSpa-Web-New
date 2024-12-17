@@ -7,11 +7,9 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
-// PetSpa React themes
 import theme from "assets/theme";
 import Presentation from "layouts/pages/presentation";
 
-// PetSpa React routes
 import routes from "routes";
 
 export default function App() {
