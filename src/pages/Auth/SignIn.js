@@ -5,30 +5,22 @@ import Swal from "sweetalert2";
 // react-router-dom components
 import { Link } from "react-router-dom";
 
-// @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Switch from "@mui/material/Switch";
 
-// @mui icons
-
-//  components
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
 import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
-import SimpleFooter from "examples/Footers/SimpleFooter";
-
-
-// Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function MySignIn() {
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+
     const { login } = useAuth();
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -68,9 +60,7 @@ function MySignIn() {
             if (response.ok) {
                 login(data.data); // Cập nhật trạng thái đăng nhập
 
-                Swal.fire("Success", "Login successful", "success").then(() => {
-                    // navigate("/auth/profile");
-                });
+                Swal.fire("Success", "Login successful", "success");
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -188,9 +178,6 @@ function MySignIn() {
                         </Card>
                     </Grid>
                 </Grid>
-            </MKBox>
-            <MKBox width="100%" position="absolute" zIndex={2} bottom="1.625rem">
-                <SimpleFooter light />
             </MKBox>
         </>
     );

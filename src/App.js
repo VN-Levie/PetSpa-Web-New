@@ -7,7 +7,9 @@ import Presentation from "layouts/pages/presentation";
 import { AuthProvider, useAuth } from "contexts/AuthContext";
 import { getRoutes } from "routes";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
+import footerRoutes from "footer.routes";
+import MKBox from "components/MKBox";
+import DefaultFooter from "examples/Footers/DefaultFooter";
 function AppRoutes() {
   const { user, loading } = useAuth();
   const routes = getRoutes(user);
@@ -31,7 +33,7 @@ function AppRoutes() {
       <Routes>
         {mapRoutes(routes)}
         <Route path="/" element={<Presentation />} />
-        <Route path="*" element={<Navigate to={user ? "/profile" : "/auth/sign-in"} />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
   }
@@ -58,6 +60,9 @@ export default function App() {
         <CssBaseline />
         <AppNavbar />
         <AppRoutes />
+        <MKBox pt={6} px={1} mt={6}>
+          <DefaultFooter content={footerRoutes} />
+        </MKBox>
       </ThemeProvider>
     </AuthProvider>
 
