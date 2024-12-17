@@ -31,7 +31,10 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import AboutUs from "layouts/pages/landing-pages/about-us";
 import ContactUs from "layouts/pages/landing-pages/contact-us";
 import Author from "layouts/pages/landing-pages/author";
-import SignIn from "layouts/pages/authentication/sign-in";
+import SignIn from "pages/Auth/SignIn";
+import SignUp from "pages/Auth/SignUp";
+import SignOut from "pages/Auth/SignOut";
+import Profile from "pages/Auth/Profile";
 
 // Sections
 import PageHeaders from "layouts/sections/page-sections/page-headers";
@@ -74,16 +77,23 @@ const routes = [
         collapse: [
           {
             name: "sign in",
-            route: "/pages/authentication/sign-in",
+            route: "/auth/sign-in",
             component: <SignIn />,
           },
           {
             name: "sign up",
-            route: "/pages/authentication/sign-up",
+            route: "/auth/sign-up",
+            component: <SignUp Link="/auth/sign-in"/>,
           },
           {
             name: "sign out",
-            route: "/pages/authentication/forgot-password",
+            route: "/auth/sign-out",
+            component: <SignOut />,
+          },
+          {
+            name: "profile",
+            route: "/auth/profile",
+            component: <Profile />,
           }
         ],
       },
