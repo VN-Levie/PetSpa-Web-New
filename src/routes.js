@@ -5,6 +5,7 @@ import SignOut from "pages/Auth/SignOut";
 import Profile from "pages/Auth/Profile";
 import AboutUs from "layouts/pages/landing-pages/about-us";
 import { useAuth } from "contexts/AuthContext";
+import VerifyEmail from "pages/Auth/VerifyEmail";
 
 export const getRoutes = (user) => {
 
@@ -28,8 +29,14 @@ export const getRoutes = (user) => {
       { name: "sign up", route: "/auth/sign-up", component: <SignUp /> },
     ];
 
+  //hidden routes (hidden from the sidebar)
+  const hiddenRoutes = [
+    { name: "verify email", route: "/auth/verify-email", component: <VerifyEmail />, hidden: true },
+
+  ];
+
   return [
-    ...baseRoutes,
+    ...baseRoutes, ...hiddenRoutes,
     {
       name: "account",
       columns: 1,

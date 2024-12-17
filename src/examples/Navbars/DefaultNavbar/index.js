@@ -66,11 +66,11 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
     setIsLoggedIn(!!token);
   }, []);
 
-  const renderNavbarItems = routes.map(({ name, icon, href, route, collapse }) => {
+  const renderNavbarItems = routes.map(({ name, icon, href, route, collapse, hidden }) => {
     if ((name === "sign in" || name === "sign up") && isLoggedIn) return null;
     if (name === "sign out" && !isLoggedIn) return null;
     if (name === "profile" && !isLoggedIn) return null;
-
+    if (hidden) return null;
     return (
       <DefaultNavbarDropdown
         key={name}

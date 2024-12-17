@@ -20,31 +20,24 @@ function MySignIn() {
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-    const { login } = useAuth();
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Already logged in',
-                text: 'You are already logged in.',
-            });
-        }
-    }, []);
+    const navigate = useNavigate();
+    const { login, user, loading } = useAuth();
+    if (loading) {
+        return;
+    }
+    if (user) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Already logged in',
+            text: 'You are already logged in.',
+        }).then(() => {
+            navigate("/");
+        });
+    }
 
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
     const handleSignIn = async () => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Already logged in',
-                text: 'You are already logged in.',
-            });
-            return;
-        }
 
         try {
             const response = await fetch("http://localhost:8090/auth/login", {
@@ -55,12 +48,26 @@ function MySignIn() {
                 body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
-            console.log(data);
+
 
             if (response.ok) {
                 login(data.data); // Cập nhật trạng thái đăng nhập
 
                 Swal.fire("Success", "Login successful", "success");
+            } else if (response.status === 401 && data.data && data.data.email && !data.data.verified) {
+                const { email, userId } = data.data;
+                Swal.fire({
+                    title: 'Email Not Verified',
+                    text: 'Your email is not verified. Would you like to go to the verification page?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Go to Verification',
+                    cancelButtonText: 'Cancel',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate("/auth/verify-email", { state: { email, userId, fromLogin: true } });
+                    }
+                });
             } else {
                 Swal.fire({
                     icon: 'error',
