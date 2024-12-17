@@ -48,7 +48,8 @@
     ],
     "default-param-last": "off",
     "react/prop-types": "off",
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "no-unused-vars": "off"
   },
   "settings": {
     "import/resolver": {
