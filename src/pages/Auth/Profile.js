@@ -62,7 +62,7 @@ function Author() {
                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                     }}
                 >
-                    <ProfileSection />
+                    <ProfileSection user={user} />
                     <Posts />
                 </Card>
                 <Contact />
