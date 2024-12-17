@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 

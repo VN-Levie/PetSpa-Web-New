@@ -16,7 +16,7 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import MuiLink from "@mui/material/Link";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
@@ -534,13 +534,13 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
 
 // Setting default values for the props of DefaultNavbar
 DefaultNavbar.defaultProps = {
-  brand: "PetSpa",
+  brand: "Pet Spa",
   transparent: false,
   light: false,
   action: false,
-  sticky: false,
+  sticky: true,
   relative: false,
-  center: false,
+  center: true,
 };
 
 // Typechecking props for the DefaultNavbar

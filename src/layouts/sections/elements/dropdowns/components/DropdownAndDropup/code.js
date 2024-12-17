@@ -7,7 +7,7 @@ import Icon from "@mui/material/Icon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
 

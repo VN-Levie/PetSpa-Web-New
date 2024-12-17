@@ -7,7 +7,7 @@ import Flatpickr from "react-flatpickr";
 // react-flatpickr styles
 import "flatpickr/dist/flatpickr.css";
 
-// PetSpa React components
+//  components
 import MKInput from "components/MKInput";
 
 function MKDatePicker({ input, ...rest }) {

@@ -1,7 +1,7 @@
-const navbarDarkCode = `// PetSpa React components
+const navbarDarkCode = `//  components
 import MKBox from "components/MKBox";
 
-// PetSpa React examples
+//  examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 // Routes

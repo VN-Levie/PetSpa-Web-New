@@ -1,7 +1,7 @@
 /**
- * The base box-shadow styles for the PetSpa React.
+ * The base box-shadow styles for the .
  * You can add new box-shadow using this file.
- * You can customized the box-shadow for the entire PetSpa React using thie file.
+ * You can customized the box-shadow for the entire  using thie file.
  */
 
 import colors from "assets/theme/base/colors";

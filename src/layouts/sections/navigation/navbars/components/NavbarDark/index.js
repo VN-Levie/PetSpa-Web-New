@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 
-// PetSpa React examples
+//  examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 // Routes

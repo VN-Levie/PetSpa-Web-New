@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 

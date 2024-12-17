@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
-// PetSpa React components
+//  components
 import MKTypography from "components/MKTypography";
 
 // Custom styles for MKProgress

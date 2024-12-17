@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import Collapse from "@mui/material/Collapse";
 import MuiLink from "@mui/material/Link";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 

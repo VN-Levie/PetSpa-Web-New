@@ -1,7 +1,7 @@
 /**
- * The base typography styles for the PetSpa React.
+ * The base typography styles for the .
  * You can add new typography style using this file.
- * You can customized the typography styles for the entire PetSpa React using thie file.
+ * You can customized the typography styles for the entire  using thie file.
  */
 
 import colors from "assets/theme/base/colors";

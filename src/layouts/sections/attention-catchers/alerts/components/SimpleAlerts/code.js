@@ -2,7 +2,7 @@ const simpleAlertsCode = `// @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKAlert from "components/MKAlert";
 

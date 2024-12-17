@@ -1,7 +1,7 @@
 /**
- * The base border styles for the PetSpa React.
+ * The base border styles for the .
  * You can add new border width, border color or border radius using this file.
- * You can customized the borders value for the entire PetSpa React using thie file.
+ * You can customized the borders value for the entire  using thie file.
  */
 
 

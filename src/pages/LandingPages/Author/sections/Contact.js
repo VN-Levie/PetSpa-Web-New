@@ -1,6 +1,6 @@
 /*
 =========================================================
-* PetSpa React - v2.1.0
+* 
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-kit-react
@@ -17,7 +17,7 @@ Coded by www.creative-tim.com
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";

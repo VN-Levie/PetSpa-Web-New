@@ -1,7 +1,7 @@
 /**
- * The base colors for the PetSpa React.
+ * The base colors for the .
  * You can add new color using this file.
- * You can customized the colors for the entire PetSpa React using thie file.
+ * You can customized the colors for the entire  using thie file.
  */
 
 export default {

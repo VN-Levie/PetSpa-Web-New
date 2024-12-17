@@ -2,10 +2,10 @@ const badgesSimpleCode = `// @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 
-// PetSpa React examples
+//  examples
 import Breadcrumbs from "examples/Breadcrumbs";
 
 function BreadcrumbsEL() {

@@ -1,6 +1,6 @@
 /*
 =========================================================
-* PetSpa React - v2.1.0
+* 
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-kit-react
@@ -19,7 +19,7 @@ import PropTypes from "prop-types";
 // react-countup component
 import CountUp from "react-countup";
 
-// PetSpa React components
+//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 

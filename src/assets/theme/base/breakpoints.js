@@ -1,7 +1,7 @@
 /**
- * The base breakpoints for the PetSpa React.
+ * The base breakpoints for the .
  * You can add new breakpoints using this file.
- * You can customized the breakpoints for the entire PetSpa React using thie file.
+ * You can customized the breakpoints for the entire  using thie file.
  */
 
 export default {
