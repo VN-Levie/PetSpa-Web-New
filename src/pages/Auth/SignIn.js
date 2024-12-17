@@ -102,11 +102,7 @@ function MySignIn() {
 
     return (
         <>
-            <DefaultNavbar
-                routes={routes}
-                transparent
-                light
-            />
+
             <MKBox
                 position="absolute"
                 top={0}

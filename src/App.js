@@ -11,6 +11,7 @@ import theme from "assets/theme";
 import Presentation from "layouts/pages/presentation";
 
 import routes from "routes";
+import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -33,15 +34,18 @@ export default function App() {
 
       return null;
     });
+  console.log("ok ok");
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <DefaultNavbar routes={routes} sticky center="false" />
       <Routes>
         {getRoutes(routes)}
         <Route path="/presentation" element={<Presentation />} />
         <Route path="*" element={<Navigate to="/presentation" />} />
       </Routes>
+
     </ThemeProvider>
   );
 }
