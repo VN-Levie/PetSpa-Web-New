@@ -45,14 +45,7 @@ function MySignUp() {
     };
 
     const handleSignUp = async () => {
-        Swal.fire({
-            title: 'Registering...',
-            text: 'Please wait while we process your registration.',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+        Swal.showLoading();
 
         // Disable all buttons
         document.querySelectorAll("button").forEach(button => button.disabled = true);
@@ -135,7 +128,7 @@ function MySignUp() {
             });
             console.error("Error:", error);
         } finally {
-            Swal.close();
+            // Swal.close();
             document.querySelectorAll("button").forEach(button => button.disabled = false);
         }
     };

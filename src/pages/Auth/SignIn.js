@@ -38,6 +38,10 @@ function MySignIn() {
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
     const handleSignIn = async () => {
+        Swal.showLoading();
+
+        // Disable all buttons
+        document.querySelectorAll("button").forEach(button => button.disabled = true);
 
         try {
             const response = await fetch("http://localhost:8090/auth/login", {
@@ -82,6 +86,9 @@ function MySignIn() {
                 text: 'An error occurred during the login process.',
             });
             console.error("Error:", error);
+        } finally {
+            // Swal.close();
+            document.querySelectorAll("button").forEach(button => button.disabled = false);
         }
     };
 
