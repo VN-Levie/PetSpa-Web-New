@@ -15,7 +15,7 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
-
+import { API_ENDPOINT } from "configs/AppConfig";
 function MySignIn() {
     const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState("");
@@ -44,7 +44,7 @@ function MySignIn() {
         document.querySelectorAll("button").forEach(button => button.disabled = true);
 
         try {
-            const response = await fetch("http://localhost:8090/auth/login", {
+            const response = await fetch(`${API_ENDPOINT}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
