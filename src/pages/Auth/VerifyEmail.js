@@ -11,6 +11,7 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import { API_ENDPOINT } from "configs/AppConfig";
 
 function VerifyEmail() {
     const [otp, setOtp] = useState("");
@@ -30,7 +31,7 @@ function VerifyEmail() {
 
         const interval = setInterval(async () => {
             try {
-                const response = await fetch(`http://localhost:8090/auth/is-verified?email=${email}`);
+                const response = await fetch(`${API_ENDPOINT}/api/auth/is-verified?email=${email}`);
                 const data = await response.json();
                 if (data.status == 200 && data.data.verified) {
                     Swal.fire("Success", "Email verified successfully", "success").then(() => {
@@ -75,7 +76,7 @@ function VerifyEmail() {
             }
         });
         try {
-            const response = await fetch("http://localhost:8090/auth/verify-otp", {
+            const response = await fetch(`${API_ENDPOINT}/api/auth/verify-otp`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -120,7 +121,7 @@ function VerifyEmail() {
             }
         });
         try {
-            const response = await fetch("http://localhost:8090/auth/resend-otp", {
+            const response = await fetch(`${API_ENDPOINT}/api/auth/resend-otp`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -179,7 +180,7 @@ function VerifyEmail() {
             }
         });
         try {
-            const response = await fetch("http://localhost:8090/auth/update-email", {
+            const response = await fetch(`${API_ENDPOINT}/api/auth/update-email`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -279,7 +280,7 @@ function VerifyEmail() {
                                 {!isUpdatingEmail && (
                                     <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
                                         <MKTypography variant="body2" color="white">
-                                            An OTP has been sent to: <br/>{email}
+                                            An OTP has been sent to: <br />{email}
                                         </MKTypography>
                                     </Grid>
                                 )}

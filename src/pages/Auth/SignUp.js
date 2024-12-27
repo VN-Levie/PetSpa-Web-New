@@ -17,7 +17,7 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 import SimpleFooter from "examples/Footers/SimpleFooter";
-
+import { API_ENDPOINT } from "configs/AppConfig";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { bool } from "prop-types";
@@ -81,7 +81,7 @@ function MySignUp() {
         }
 
         try {
-            const response = await fetch("http://localhost:8090/auth/register", {
+            const response = await fetch(`${API_ENDPOINT}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
