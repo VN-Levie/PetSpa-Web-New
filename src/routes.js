@@ -3,7 +3,7 @@ import SignIn from "pages/Auth/SignIn";
 import SignUp from "pages/Auth/SignUp";
 import SignOut from "pages/Auth/SignOut";
 import Profile from "pages/Auth/Profile";
-import AboutUs from "layouts/pages/landing-pages/about-us";
+import AboutUs from "pages/LandingPages/AboutUs";
 import { useAuth } from "contexts/AuthContext";
 import VerifyEmail from "pages/Auth/VerifyEmail";
 
