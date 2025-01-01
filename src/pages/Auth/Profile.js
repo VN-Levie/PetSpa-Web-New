@@ -158,24 +158,32 @@ function Author() {
     };
 
     const handleDialogSubmit = async (data) => {
+        Swal.showLoading();
         const formData = new FormData();
         formData.append("file", data.file[0]);
-        // formData.append("petDTO", JSON.stringify({
-        //     ...data,
-        //     userId: profile.id,
-        //     avatarUrl: "",
-        // }));
-        formData.append("petDTO", JSON.stringify({
-            name: data.name,
-            description: data.description,
-            height: data.height,
-            weight: data.weight,
-            petTypeId: data.petTypeId,
-            userId: profile.id,
-            avatarUrl: "",
-        }));
+
+
         if (currentPet) {
-            formData.append("id", currentPet.id);
+            formData.append("petDTO", JSON.stringify({
+                id: currentPet.id,
+                name: data.name,
+                description: data.description,
+                height: data.height,
+                weight: data.weight,
+                petTypeId: data.petTypeId,
+                userId: profile.id,
+                avatarUrl: "",
+            }));
+        } else {
+            formData.append("petDTO", JSON.stringify({
+                name: data.name,
+                description: data.description,
+                height: data.height,
+                weight: data.weight,
+                petTypeId: data.petTypeId,
+                userId: profile.id,
+                avatarUrl: "",
+            }));
         }
 
         try {

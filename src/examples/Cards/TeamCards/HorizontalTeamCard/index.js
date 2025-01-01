@@ -73,6 +73,8 @@ function HorizontalTeamCardWithActions({ image, name, position, description, onE
               src={image}
               alt={name}
               width="100%"
+              height="200px"  // Chiều cao cố định
+              objectFit="cover"  // Đảm bảo ảnh luôn phủ kín mà không méo
               borderRadius="md"
               shadow="lg"
             />
@@ -84,7 +86,15 @@ function HorizontalTeamCardWithActions({ image, name, position, description, onE
             <MKTypography variant="h6" color={position.color} mb={1}>
               {position.label}
             </MKTypography>
-            <MKTypography variant="body2" color="text" sx={{ overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>
+            <MKTypography
+              variant="body2"
+              color="text"
+              sx={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+              }}
+            >
               {description}
             </MKTypography>
             <MKBox mt={2}>
