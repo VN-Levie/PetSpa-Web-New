@@ -74,10 +74,31 @@ function Information() {
               image="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
               title="Get insights on Search"
               description="Website visitors today demand a frictionless user expericence — especially when using search. Because of the hight standards."
-              action={[{
+              actions={[{
                 type: "internal",
                 route: "pages/company/about-us",
                 color: "info",
+                label: "find out more",
+              }, {
+                type: "internal",
+                route: "pages/company/about-us",
+                color: "success",
+                label: "find out more",
+              }]}
+            />
+            <CenteredBlogCard
+              image="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+              title="Get insights on Search"
+              description="Website visitors today demand a frictionless user expericence — especially when using search. Because of the hight standards."
+              actions={[{
+                type: "internal",
+                route: "pages/company/about-us",
+                color: "info",
+                label: "find out more",
+              }, {
+                type: "internal",
+                route: "pages/company/about-us",
+                color: "success",
                 label: "find out more",
               }]}
             />

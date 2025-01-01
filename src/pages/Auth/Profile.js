@@ -36,6 +36,8 @@ import HorizontalTeamCard from "examples/Cards/TeamCards/HorizontalTeamCard";
 import TransparentBlogCard from "examples/Cards/BlogCards/TransparentBlogCard";
 import BackgroundBlogCard from "examples/Cards/BlogCards/BackgroundBlogCard";
 import { HorizontalTeamCardWithActions } from "examples/Cards/TeamCards/HorizontalTeamCard";
+import CenteredBlogCard from "examples/Cards/BlogCards/CenteredBlogCard";
+
 import Swal from "sweetalert2";
 
 function Author() {
@@ -293,6 +295,7 @@ function Author() {
                             <MKButton variant="contained" color="primary" onClick={() => setOpenDialog(true)}>Add Pet</MKButton>
                             <Grid container spacing={3} mt={2}>
                                 {pets.map((pet) => (
+
                                     <Grid item xs={12} sm={12} lg={6} key={pet.id}>
                                         <HorizontalTeamCardWithActions
                                             image={`${API_ENDPOINT}${pet.avatarUrl}`}
