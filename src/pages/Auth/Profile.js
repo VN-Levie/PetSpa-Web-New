@@ -1,5 +1,6 @@
 // @mui material components
 import Card from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
 
 //  components
 import MKBox from "components/MKBox";
@@ -48,7 +49,11 @@ function Author() {
     }, [user, loading, navigate]);
 
     if (loading || !profile) {
-        return <div>Loading...</div>; // Hoặc thêm spinner
+        return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+            </div>
+        );
     }
     return (
         <>
