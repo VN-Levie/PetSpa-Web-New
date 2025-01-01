@@ -1,7 +1,7 @@
 // @mui material components
 import Card from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
-import { TextField } from "@mui/material";
+import { TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, DialogContentText } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import MKBox from "components/MKBox";
@@ -25,13 +25,19 @@ import team4 from "assets/images/ivana-square.jpg";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import post1 from "assets/images/examples/testimonial-6-2.jpg";
+import post2 from "assets/images/examples/testimonial-6-3.jpg";
+import post3 from "assets/images/examples/blog-9-4.jpg";
+import post4 from "assets/images/examples/blog2.jpg";
 import bgImage from "assets/images/city-profile.jpg";
 import { API_ENDPOINT } from "configs/AppConfig";
 import profilePicture from "assets/images/bruce-mars.jpg";
 import HorizontalTeamCard from "examples/Cards/TeamCards/HorizontalTeamCard";
+import TransparentBlogCard from "examples/Cards/BlogCards/TransparentBlogCard";
+import BackgroundBlogCard from "examples/Cards/BlogCards/BackgroundBlogCard";
+import { HorizontalTeamCardWithActions } from "examples/Cards/TeamCards/HorizontalTeamCard";
+import Swal from "sweetalert2";
 
-// 
 function Author() {
 
     const { user, loading } = useAuth();
@@ -39,6 +45,11 @@ function Author() {
     const [profile, setProfile] = useState(null);
     const [petCount, setPetCount] = useState(0);
     const { register, handleSubmit, reset } = useForm();
+    const [pets, setPets] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [currentPet, setCurrentPet] = useState(null);
+    const [petTypes, setPetTypes] = useState([]);
+    const [confirmDeleteDialog, setConfirmDeleteDialog] = useState({ open: false, petId: null });
 
     useEffect(() => {
         if (!loading && !user) {
@@ -75,9 +86,85 @@ function Author() {
         }
     }, [user, loading, navigate]);
 
-    const onSubmit = async (data) => {
+    const fetchPets = async () => {
+        try {
+            const response = await axios.get(`${API_ENDPOINT}/api/user-pet/list`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            if (response.data.status === 200) {
+                setPets(response.data.data);
+            }
+        } catch (error) {
+            console.error("Error fetching pets:", error);
+        }
+    };
+
+    const fetchPetTypes = async () => {
+        try {
+            const response = await axios.get(`${API_ENDPOINT}/api/user-pet/pet-type`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            if (response.data.status === 200) {
+                setPetTypes(response.data.data);
+            }
+        } catch (error) {
+            console.error("Error fetching pet types:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchPets();
+            fetchPetTypes();
+        }
+    }, [user]);
+
+    const handleEditPet = (pet) => {
+        setCurrentPet(pet);
+        setOpenDialog(true);
+    };
+
+    const handleDeletePet = async (petId) => {
+        setConfirmDeleteDialog({ open: true, petId });
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await axios.post(`${API_ENDPOINT}/api/user-pet/delete`, { id: confirmDeleteDialog.petId }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            fetchPets();
+            setConfirmDeleteDialog({ open: false, petId: null });
+            Swal.fire("Deleted!", "Pet has been deleted.", "success");
+        } catch (error) {
+            console.error("Error deleting pet:", error);
+            Swal.fire("Error!", "There was an error deleting the pet.", "error");
+        }
+    };
+
+    const handleConfirmDeleteClose = () => {
+        setConfirmDeleteDialog({ open: false, petId: null });
+    };
+
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+        setCurrentPet(null);
+    };
+
+    const handleDialogSubmit = async (data) => {
         const formData = new FormData();
         formData.append("file", data.file[0]);
+        // formData.append("petDTO", JSON.stringify({
+        //     ...data,
+        //     userId: profile.id,
+        //     avatarUrl: "",
+        // }));
         formData.append("petDTO", JSON.stringify({
             name: data.name,
             description: data.description,
@@ -87,20 +174,26 @@ function Author() {
             userId: profile.id,
             avatarUrl: "",
         }));
+        if (currentPet) {
+            formData.append("id", currentPet.id);
+        }
 
         try {
-            const response = await axios.post(`${API_ENDPOINT}/api/user-pet/add`, formData, {
+            const endpoint = currentPet ? `${API_ENDPOINT}/api/user-pet/edit` : `${API_ENDPOINT}/api/user-pet/add`;
+            const response = await axios.post(endpoint, formData, {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
             if (response.data.status === 200) {
-                alert("Pet added successfully");
-                reset();
+                Swal.fire("Success!", currentPet ? "Pet edited successfully" : "Pet added successfully", "success");
+                fetchPets();
+                handleDialogClose();
             }
         } catch (error) {
-            console.error("Error adding pet:", error);
+            console.error("Error submitting pet:", error);
+            Swal.fire("Error!", "There was an error submitting the pet.", "error");
         }
     };
 
@@ -182,59 +275,118 @@ function Author() {
                                                 </MKTypography>
                                             </Grid>
                                         </Grid>
-                                        <form onSubmit={handleSubmit(onSubmit)}>
-                                            <TextField
-                                                {...register("name")}
-                                                label="Pet Name"
-                                                fullWidth
-                                                margin="normal"
-                                                required
-                                            />
-                                            <TextField
-                                                {...register("description")}
-                                                label="Description"
-                                                fullWidth
-                                                margin="normal"
-                                                required
-                                            />
-                                            <TextField
-                                                {...register("height")}
-                                                label="Height"
-                                                type="number"
-                                                fullWidth
-                                                margin="normal"
-                                                required
-                                            />
-                                            <TextField
-                                                {...register("weight")}
-                                                label="Weight"
-                                                type="number"
-                                                fullWidth
-                                                margin="normal"
-                                                required
-                                            />
-                                            <TextField
-                                                {...register("petTypeId")}
-                                                label="Pet Type ID"
-                                                type="number"
-                                                fullWidth
-                                                margin="normal"
-                                                required
-                                            />
-                                            <input
-                                                {...register("file")}
-                                                type="file"
-                                                accept="image/*"
-                                                required
-                                            />
-                                            <MKButton type="submit" variant="contained" color="primary">
-                                                Add Pet
-                                            </MKButton>
-                                        </form>
+
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </Container>
+                        <Container>
+                            <MKTypography variant="h4" mb={2}>Manage Pets</MKTypography>
+                            <MKButton variant="contained" color="primary" onClick={() => setOpenDialog(true)}>Add Pet</MKButton>
+                            <Grid container spacing={3} mt={2}>
+                                {pets.map((pet) => (
+                                    <Grid item xs={12} sm={12} lg={6} key={pet.id}>
+                                        <HorizontalTeamCardWithActions
+                                            image={`${API_ENDPOINT}${pet.avatarUrl}`}
+                                            name={pet.name}
+                                            position={{ color: "info", label: `Height: ${pet.height} cm, Weight: ${pet.weight} kg` }}
+                                            description={pet.description}
+                                            onEdit={() => handleEditPet(pet)}
+                                            onDelete={() => handleDeletePet(pet.id)}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Container>
+                        <Dialog open={openDialog} onClose={handleDialogClose}>
+                            <DialogTitle>{currentPet ? "Edit Pet" : "Add Pet"}</DialogTitle>
+                            <DialogContent>
+                                <form onSubmit={handleSubmit(handleDialogSubmit)}>
+                                    <TextField
+                                        {...register("name")}
+                                        label="Pet Name"
+                                        fullWidth
+                                        margin="normal"
+                                        required
+                                        defaultValue={currentPet?.name || ""}
+                                    />
+                                    <TextField
+                                        {...register("description")}
+                                        label="Description"
+                                        fullWidth
+                                        margin="normal"
+                                        required
+                                        defaultValue={currentPet?.description || ""}
+                                    />
+                                    <TextField
+                                        {...register("height")}
+                                        label="Height"
+                                        type="number"
+                                        fullWidth
+                                        margin="normal"
+                                        required
+                                        defaultValue={currentPet?.height || ""}
+                                    />
+                                    <TextField
+                                        {...register("weight")}
+                                        label="Weight"
+                                        type="number"
+                                        fullWidth
+                                        margin="normal"
+                                        required
+                                        defaultValue={currentPet?.weight || ""}
+                                    />
+                                    <Select
+                                        {...register("petTypeId")}
+                                        label="Pet Type"
+                                        fullWidth
+                                        height="40px"
+                                        margin="dense"
+                                        required
+                                        defaultValue={currentPet?.petTypeId || ""}
+                                        displayEmpty
+                                        renderValue={(selected) => {
+                                            if (!selected) {
+                                                return <em>Select Pet Type</em>;
+                                            }
+                                            const selectedType = petTypes.find(type => type.id === selected);
+                                            return selectedType ? selectedType.name : <em>Select Pet Type</em>;
+                                        }}
+                                    >
+                                        <MenuItem disabled value="">
+                                            <em>Select Pet Type</em>
+                                        </MenuItem>
+                                        {petTypes.map((type) => (
+                                            <MenuItem key={type.id} value={type.id}>
+                                                {type.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    <input
+                                        {...register("file")}
+                                        type="file"
+                                        accept="image/*"
+                                        required={!currentPet}
+                                    />
+                                    <DialogActions>
+                                        <MKButton onClick={handleDialogClose} color="secondary">Cancel</MKButton>
+                                        <MKButton type="submit" variant="contained" color="primary">{currentPet ? "Save" : "Add"}</MKButton>
+                                    </DialogActions>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog open={confirmDeleteDialog.open} onClose={handleConfirmDeleteClose}>
+                            <DialogTitle>Confirm Delete</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Are you sure you want to delete this pet?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <MKButton onClick={handleConfirmDeleteClose} color="secondary">Cancel</MKButton>
+                                <MKButton onClick={confirmDelete} color="primary">Delete</MKButton>
+                            </DialogActions>
+                        </Dialog>
                         <Container>
                             <Grid container>
                                 <Grid item xs={12} md={8} sx={{ mb: 6 }}>
@@ -248,6 +400,17 @@ function Author() {
                                 </Grid>
                             </Grid>
                             <Grid container spacing={3}>
+                                {/* <Grid item xs={12} md={6} lg={4}>
+                                    <MKBox mt={3}>
+                                        <HorizontalTeamCard
+                                            image={team1}
+                                            title="Single room in the center of the city"
+                                            description="As Uber works through a huge amount of internal management turmoil, the company is also consolidating more of its international business."
+                                            categories={["Private Room", "1 Guest", "1 Sofa"]}
+                                            action='View'
+                                        />
+                                    </MKBox>
+                                </Grid> */}
                                 <Grid item xs={12} lg={6}>
                                     <MKBox mb={1}>
                                         <HorizontalTeamCard
@@ -291,7 +454,68 @@ function Author() {
                             </Grid>
                         </Container>
                     </MKBox>
-                    <Posts />
+                    <MKBox component="section" py={2}>
+                        <Container>
+                            <Grid container item xs={12} lg={6}>
+                                <MKTypography variant="h3" mb={6}>
+                                    Check my latest blogposts
+                                </MKTypography>
+                            </Grid>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} sm={6} lg={3}>
+                                    <TransparentBlogCard
+                                        image={post1}
+                                        title="Rover raised $65 million"
+                                        description="Finding temporary housing for your dog should be as easy as renting an Airbnb. That’s the idea behind Rover ..."
+                                        action={{
+                                            type: "internal",
+                                            route: "/pages/blogs/author",
+                                            color: "info",
+                                            label: "read more",
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} lg={3}>
+                                    <TransparentBlogCard
+                                        image={post2}
+                                        title="MateLabs machine learning"
+                                        description="If you’ve ever wanted to train a machine learning model and integrate it with IFTTT, you now can with ..."
+                                        action={{
+                                            type: "internal",
+                                            route: "/pages/blogs/author",
+                                            color: "info",
+                                            label: "read more",
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} lg={3}>
+                                    <TransparentBlogCard
+                                        image={post3}
+                                        title="MateLabs machine learning"
+                                        description="If you’ve ever wanted to train a machine learning model and integrate it with IFTTT, you now can with ..."
+                                        action={{
+                                            type: "internal",
+                                            route: "/pages/blogs/author",
+                                            color: "info",
+                                            label: "read more",
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} lg={3}>
+                                    <BackgroundBlogCard
+                                        image={post4}
+                                        title="Flexible work hours"
+                                        description="Rather than worrying about switching offices every couple years, you stay in the same place."
+                                        action={{
+                                            type: "internal",
+                                            route: "/pages/blogs/author",
+                                            label: "read more",
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Container>
+                    </MKBox>
                 </Card>
                 <Contact />
                 <Footer />
