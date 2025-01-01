@@ -10,8 +10,7 @@ import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import footerRoutes from "footer.routes";
 import MKBox from "components/MKBox";
 import DefaultFooter from "examples/Footers/DefaultFooter";
-function AppRoutes() {
-  console.log("AppRoutes");
+function AppRoutes() { 
   const { user, loading } = useAuth();
   const routes = getRoutes(user);
   const mapRoutes = (allRoutes) =>
