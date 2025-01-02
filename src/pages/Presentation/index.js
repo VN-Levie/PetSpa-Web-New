@@ -68,7 +68,7 @@ function Presentation() {
         }}
       >
         <Counters />
-        <Information />
+        {/* <Information /> */}
         <ServiceBlocks />
         <Pages />
 

@@ -6,6 +6,8 @@ import Profile from "pages/Auth/Profile";
 import AboutUs from "pages/LandingPages/AboutUs";
 import { useAuth } from "contexts/AuthContext";
 import VerifyEmail from "pages/Auth/VerifyEmail";
+import ServiceDetail from "pages/SpaServices/ServiceDetail";
+import CategoryDetail from "pages/SpaServices/CategoryDetail";
 
 export const getRoutes = (user) => {
 
@@ -32,6 +34,19 @@ export const getRoutes = (user) => {
   //hidden routes (hidden from the sidebar)
   const hiddenRoutes = [
     { name: "verify email", route: "/auth/verify-email", component: <VerifyEmail />, hidden: true },
+    // {
+    //   name: "service detail",
+    //   route: "/cat/:catId/service/:serviceId",
+    //   component: <ServiceDetail />,
+    //   hidden: false,
+    // },
+    
+    {
+      name: "category detail",
+      route: "/cat-:catId",
+      component: <CategoryDetail />,
+      hidden: true,
+    },
 
   ];
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "assets/theme";
@@ -10,7 +10,9 @@ import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import footerRoutes from "footer.routes";
 import MKBox from "components/MKBox";
 import DefaultFooter from "examples/Footers/DefaultFooter";
-function AppRoutes() { 
+import ServiceDetail from "pages/SpaServices/ServiceDetail";
+import CategoryDetail from "pages/SpaServices/CategoryDetail";
+function AppRoutes() {
   const { user, loading } = useAuth();
   const routes = getRoutes(user);
   const mapRoutes = (allRoutes) =>
@@ -30,10 +32,14 @@ function AppRoutes() {
   if (!loading) {
 
     return (
+
       <Routes>
         {mapRoutes(routes)}
+        <Route path="/cat/:catId/service/:serviceId" element={<ServiceDetail />} />
+
         <Route path="/" element={<Presentation />} />
         <Route path="*" element={<Navigate to="/" />} />
+
       </Routes>
     );
   }
@@ -98,6 +104,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+
       <ThemeProvider theme={theme}>
         <CssBaseline />
 
@@ -108,6 +115,7 @@ export default function App() {
           <DefaultFooter content={footerRoutes} />
         </MKBox>
       </ThemeProvider>
+
     </AuthProvider>
 
   );

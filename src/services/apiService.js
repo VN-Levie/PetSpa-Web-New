@@ -14,7 +14,7 @@ const apiClient = axios.create({
 // Hàm refresh token
 const refreshToken = async () => {
     console.log('Refresh token');
-    
+
     try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) throw new Error('No refresh token found');
@@ -37,9 +37,11 @@ const refreshToken = async () => {
 // Interceptor thêm token vào request
 apiClient.interceptors.request.use(
     async (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+        if (!config.url.includes('/api/public')) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -54,7 +56,7 @@ apiClient.interceptors.response.use(
     async (error) => {
         console.log('Error:', error);
         console.log('error.response?.status:', error.response?.status);
-        
+
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
@@ -73,21 +75,49 @@ apiClient.interceptors.response.use(
 );
 
 // Hàm GET
-export const get = async (endpoint, params = {}) => {
-    return apiClient.get(endpoint, { params });
+export const get = async (endpoint, params = {}, needJwt = false) => {
+    const config = { params };
+    if (needJwt) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers = { 'Authorization': `Bearer ${token}` };
+        }
+    }
+    return apiClient.get(endpoint, config);
 };
 
 // Hàm POST
-export const post = async (endpoint, data) => {
-    return apiClient.post(endpoint, data);
+export const post = async (endpoint, data, needJwt = false) => {
+    const config = {};
+    if (needJwt) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers = { 'Authorization': `Bearer ${token}` };
+        }
+    }
+    return apiClient.post(endpoint, data, config);
 };
 
 // Hàm PUT
-export const put = async (endpoint, data) => {
-    return apiClient.put(endpoint, data);
+export const put = async (endpoint, data, needJwt = false) => {
+    const config = {};
+    if (needJwt) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers = { 'Authorization': `Bearer ${token}` };
+        }
+    }
+    return apiClient.put(endpoint, data, config);
 };
 
 // Hàm DELETE
-export const del = async (endpoint) => {
-    return apiClient.delete(endpoint);
+export const del = async (endpoint, needJwt = false) => {
+    const config = {};
+    if (needJwt) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers = { 'Authorization': `Bearer ${token}` };
+        }
+    }
+    return apiClient.delete(endpoint, config);
 };

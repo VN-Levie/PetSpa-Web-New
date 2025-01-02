@@ -52,12 +52,12 @@ function ServiceBlocks() {
     fetchData();
   }, []);
 
-  const renderData = data.map(({ name: title, description, items }) => (
+  const renderData = data.map(({ name: title, description, items, id: catId }) => (
     <Grid container spacing={3} sx={{ mb: 10 }} key={title}>
       <Grid item xs={12} lg={3}>
         <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
           <MKTypography variant="h3" fontWeight="bold" mb={1}>
-            {title}
+            {title} - {catId}
           </MKTypography>
           <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
             {description}
@@ -66,13 +66,15 @@ function ServiceBlocks() {
       </Grid>
       <Grid item xs={12} lg={9}>
         <Grid container spacing={3}>
-          {items.map(({ imageUrl: image, name, description, route }) => (
-            <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
-              <Link to={route}>
-                <ExampleCard image={image} name={name} description={description} />
-              </Link>
-            </Grid>
-          ))}
+          {items.map(({ imageUrl: image, name, description, route, id: serviceId }) => {
+            return (
+              <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
+                <Link to={`/cat/${catId}/service/${serviceId}`}>
+                  <ExampleCard image={image} name={name + serviceId} description={description} />
+                </Link>
+              </Grid>
+            );
+          })}
         </Grid>
       </Grid>
     </Grid>
