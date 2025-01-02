@@ -1,22 +1,29 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import MKBox from "components/MKBox";
 import Card from "@mui/material/Card";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import Contact from "pages/LandingPages/Author/sections/Contact";
 import Footer from "pages/LandingPages/Author/sections/Footer";
-import { Container, Grid, CircularProgress, Typography } from "@mui/material";
+import { Container, Grid, CircularProgress, Typography, Select, MenuItem } from "@mui/material";
 import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 import { get } from 'services/apiService';
-import {  useAuth } from "contexts/AuthContext";
+import { useAuth } from "contexts/AuthContext";
+import { useBooking } from "contexts/BookingContext";
+import MKAlert from "components/MKAlert";
+import Swal from "sweetalert2";
 function ServiceDetail() {
     const { user, loading } = useAuth();
     const { catId, serviceId } = useParams();
+    const { bookingData, updatePetDetails, addServiceToCart, removeServiceFromCart, clearAllServices } = useBooking();
     const [serviceData, setServiceData] = useState(null);
     const [meLoading, setMeLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [pets, setPets] = useState([]);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -33,8 +40,81 @@ function ServiceDetail() {
             }
         };
 
+        const fetchPets = async () => {
+            try {
+                const response = await get('/api/user-pet/list', {}, true);
+                if (response.data.status === 200) {
+                    setPets(response.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching pets:", error);
+            }
+        };
+
         fetchData();
-    }, [serviceId]);
+        if (user) {
+            fetchPets();
+        }
+    }, [serviceId, user]);
+
+    const handlePetSelection = (event) => {
+        const selectedPet = pets.find(pet => pet.id === event.target.value);
+        updatePetDetails({ id: selectedPet.id, name: selectedPet.name });
+    };
+
+    const handleChangePet = () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are changing the pet for all selected services. If you want to book for another pet, please complete the current process first.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Change Pet',
+            cancelButtonText: 'Keep Current Pet',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updatePetDetails({});
+            }
+        });
+    };
+
+    const handleAddToCart = (event) => {
+        event.preventDefault();
+        if (!bookingData.petDetails.id) {
+            // Swal.fire("Please select a pet before adding a service to the cart.");
+            Swal.fire({
+                icon: 'error',
+                title: 'No Pet Selected',
+                text: 'Please select a pet before adding a service to the cart.',
+            });
+            return;
+        }
+        const note = event.target.note.value || null;
+        const existingService = bookingData.selectedServices.find(service => service.serviceId === serviceId);
+        if (existingService) {
+            // Swal.fire("Service already added to the cart.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Service Already Added',
+                text: 'Service already added to the cart.',
+            });
+        } else {
+            addServiceToCart(serviceId, serviceData.name, serviceData.price, note);
+        }
+    };
+
+    const handleRemoveService = (serviceId) => {
+        removeServiceFromCart(serviceId);
+    };
+
+    const handleClearAll = () => {
+        clearAllServices();
+    };
+
+    const handleCheckout = () => {
+        navigate("/checkout");
+    };
+
+    const isServiceInCart = bookingData.selectedServices.some(service => service.serviceId === serviceId);
 
     if (meLoading) {
         return (
@@ -94,15 +174,12 @@ function ServiceDetail() {
                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                     }}
                 >
-
-
                     <Grid item>
                         <MKBox
                             width="100%"
                             bgColor="white"
                             borderRadius="xl"
                             shadow="xl"
-
                             sx={{ overflow: "hidden" }}
                         >
                             <Grid container spacing={2}>
@@ -138,131 +215,150 @@ function ServiceDetail() {
                                             <MKTypography variant="body2" color="white" opacity={0.8} mb={3}>
                                                 {serviceData.description}
                                             </MKTypography>
-                                            <MKBox display="flex" p={1}>
-                                                <MKTypography variant="button" color="white">
-                                                    <i className="fas fa-phone" />
-                                                </MKTypography>
-                                                <MKTypography
-                                                    component="span"
-                                                    variant="button"
-                                                    color="white"
-                                                    opacity={0.8}
-                                                    ml={2}
-                                                    fontWeight="regular"
-                                                >
-                                                    (+40) 772 100 200
-                                                </MKTypography>
-                                            </MKBox>
-                                            <MKBox display="flex" color="white" p={1}>
-                                                <MKTypography variant="button" color="white">
-                                                    <i className="fas fa-envelope" />
-                                                </MKTypography>
-                                                <MKTypography
-                                                    component="span"
-                                                    variant="button"
-                                                    color="white"
-                                                    opacity={0.8}
-                                                    ml={2}
-                                                    fontWeight="regular"
-                                                >
-                                                    hello@creative-tim.com
-                                                </MKTypography>
-                                            </MKBox>
-                                            <MKBox display="flex" color="white" p={1}>
-                                                <MKTypography variant="button" color="white">
-                                                    <i className="fas fa-map-marker-alt" />
-                                                </MKTypography>
-                                                <MKTypography
-                                                    component="span"
-                                                    variant="button"
-                                                    color="white"
-                                                    opacity={0.8}
-                                                    ml={2}
-                                                    fontWeight="regular"
-                                                >
-                                                    Dyonisie Wolf Bucharest, RO 010458
-                                                </MKTypography>
-                                            </MKBox>
-                                            <MKBox mt={3}>
-                                                <MKButton variant="text" color="white" size="large" iconOnly>
-                                                    <i className="fab fa-facebook" style={{ fontSize: "1.25rem" }} />
-                                                </MKButton>
-                                                <MKButton variant="text" color="white" size="large" iconOnly>
-                                                    <i className="fab fa-twitter" style={{ fontSize: "1.25rem" }} />
-                                                </MKButton>
-                                                <MKButton variant="text" color="white" size="large" iconOnly>
-                                                    <i className="fab fa-dribbble" style={{ fontSize: "1.25rem" }} />
-                                                </MKButton>
-                                                <MKButton variant="text" color="white" size="large" iconOnly>
-                                                    <i className="fab fa-instagram" style={{ fontSize: "1.25rem" }} />
-                                                </MKButton>
-                                            </MKBox>
+                                            <Grid container alignItems="center" py={1}>
+                                                <Grid item xs={12} sm={8} lineHeight={1}>
+                                                    <MKTypography variant="button" color="success" fontWeight="bold" textTransform="uppercase">
+                                                        Service
+                                                    </MKTypography>
+                                                </Grid>
+                                                <Grid item xs={12} sm={4} lineHeight={1}>
+                                                    <MKTypography variant="caption" color="success" fontWeight="bold">
+                                                        Price
+                                                    </MKTypography>
+                                                </Grid>
+
+                                            </Grid>
+                                            {bookingData.selectedServices.map((service, index) => (
+                                                <Grid container alignItems="center" py={1} key={index}>
+                                                    <Grid item xs={12} sm={8} lineHeight={1}>
+                                                        <MKTypography variant="button" color="info" textTransform="uppercase">
+                                                            {service.name}
+                                                        </MKTypography>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={3} lineHeight={1}>
+                                                        <MKTypography variant="caption" color="info">
+                                                            {service.price}
+                                                        </MKTypography>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={1} lineHeight={1}>
+                                                        <MKButton variant="text" color="error" onClick={() => handleRemoveService(service.serviceId)}>
+                                                            X
+                                                        </MKButton>
+                                                    </Grid>
+                                                </Grid>
+                                            ))}
+                                            {bookingData.selectedServices.length > 0 && (
+                                                <Grid container item justifyContent="center" xs={12} my={2} spacing={2}>
+                                                    <Grid item xs={6}>
+                                                        <MKButton type="submit" variant="gradient" color="error" fullWidth onClick={handleClearAll}>
+                                                            Clear All
+                                                        </MKButton>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <MKButton type="submit" variant="gradient" color="success" fullWidth onClick={handleCheckout}>
+                                                            Checkout
+                                                        </MKButton>
+                                                    </Grid>
+                                                </Grid>
+                                            )}
                                         </MKBox>
                                     </MKBox>
                                 </Grid>
-                              
                                 <Grid item xs={12} lg={7}>
-                                    <MKBox component="form" p={2} method="post">
-                                        <MKBox px={3} py={{ xs: 2, sm: 6 }}>
-                                            <MKTypography variant="h2" mb={1}>
-                                                Say Hi! {user?.name}
-                                            </MKTypography>
-                                            <MKTypography variant="body1" color="text" mb={2}>
-                                                We&apos;d like to talk with you.
-                                            </MKTypography>
-                                        </MKBox>
-                                        <MKBox pt={0.5} pb={3} px={3}>
-                                            <Grid container>
-                                                <Grid item xs={12} pr={1} mb={6}>
-                                                    <MKInput
-                                                        variant="standard"
-                                                        label="My name is"
-                                                        placeholder="Full Name"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                    />
+                                    {user ? (
+                                        pets.length > 0 ? (
+                                            <MKBox component="form" p={2} method="post" onSubmit={handleAddToCart}>
+                                                <MKBox px={3} py={{ xs: 2, sm: 6 }}>
+                                                    <MKTypography variant="h2" mb={1}>
+                                                        {/* Say Hi! {user?.name} */}
+                                                        {serviceData.name}
+                                                    </MKTypography>
+                                                    <MKTypography variant="body1" color="text" mb={1}>
+                                                        Price: ${serviceData.price}
+                                                    </MKTypography>
+                                                </MKBox>
+                                                <MKBox pt={0.5} pb={3} px={3}>
+                                                    <Grid container>
+                                                        <Grid item xs={12} pr={1} mb={6}>
+                                                            <MKTypography variant="body1" color="text" mb={1}>
+                                                                Select Pet
+                                                            </MKTypography>
+                                                            <Select
+                                                                variant="standard"
+                                                                label="Select Pet"
+                                                                fullWidth
+                                                                defaultValue={bookingData.petDetails.id || ""}
+                                                                displayEmpty
+                                                                onChange={handlePetSelection}
+                                                                disabled={!!bookingData.petDetails.id}
+                                                            >
+                                                                <MenuItem disabled value="">
+                                                                    <em>Select Pet</em>
+                                                                </MenuItem>
+                                                                {pets.map((pet) => (
+                                                                    <MenuItem key={pet.id} value={pet.id}>
+                                                                        {pet.name}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Select>
+                                                        </Grid>
+                                                        <Grid item xs={12} pr={1} mb={6}>
+                                                            <MKInput
+                                                                variant="standard"
+                                                                label="Note"
+                                                                placeholder="Enter any notes here"
+                                                                InputLabelProps={{ shrink: true }}
+                                                                fullWidth
+                                                                multiline
+                                                                rows={4}
+                                                                name="note"
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid
+                                                        container
+                                                        item
+                                                        xs={12}
+                                                        md={6}
+                                                        justifyContent="flex-end"
+                                                        textAlign="right"
+                                                        ml="auto"
+                                                    >
+                                                        {bookingData.petDetails.id ? (
+                                                            <MKButton variant="gradient" color="info" onClick={handleChangePet}>
+                                                                Change Pet
+                                                            </MKButton>
+                                                        ) : (
+                                                            <MKButton variant="gradient" color="info">
+                                                                Confirm Pet
+                                                            </MKButton>
+                                                        )}
+                                                    </Grid>
+                                                    <Grid container item justifyContent="center" xs={12} my={2}>
+                                                        <MKButton type="submit" variant="gradient" color="dark" fullWidth disabled={isServiceInCart}>
+                                                            Add to service cart
+                                                        </MKButton>
+                                                    </Grid>
+                                                </MKBox>
+                                            </MKBox>
+                                        ) : (
+                                            <MKBox p={2}>
+                                                <Grid item xs={12}>
+                                                    <MKAlert color="warning">Please add a pet in your profile before using this feature.</MKAlert>
                                                 </Grid>
-                                                <Grid item xs={12} pr={1} mb={6}>
-                                                    <MKInput
-                                                        variant="standard"
-                                                        label="I'm looking for"
-                                                        placeholder="What you love"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} pr={1} mb={6}>
-                                                    <MKInput
-                                                        variant="standard"
-                                                        label="Your message"
-                                                        placeholder="I want to say that..."
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                        multiline
-                                                        rows={6}
-                                                    />
-                                                </Grid>
+                                            </MKBox>
+                                        )
+                                    ) : (
+                                        <MKBox p={2}>
+                                            <Grid item xs={12}>
+                                                <MKAlert color="primary">Please log in to use this feature.</MKAlert>
                                             </Grid>
-                                            <Grid
-                                                container
-                                                item
-                                                xs={12}
-                                                md={6}
-                                                justifyContent="flex-end"
-                                                textAlign="right"
-                                                ml="auto"
-                                            >
-                                                <MKButton variant="gradient" color="info">
-                                                    Send Message
-                                                </MKButton>
-                                            </Grid>
                                         </MKBox>
-                                    </MKBox>
+                                    )}
                                 </Grid>
                             </Grid>
                         </MKBox>
                     </Grid>
-
                 </Card>
             </MKBox>
         </>

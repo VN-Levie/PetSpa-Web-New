@@ -8,6 +8,7 @@ import { useAuth } from "contexts/AuthContext";
 import VerifyEmail from "pages/Auth/VerifyEmail";
 import ServiceDetail from "pages/SpaServices/ServiceDetail";
 import CategoryDetail from "pages/SpaServices/CategoryDetail";
+import Checkout from "pages/Checkout/Checkout";
 
 export const getRoutes = (user) => {
 
@@ -18,6 +19,15 @@ export const getRoutes = (user) => {
       icon: <Icon>dashboard</Icon>,
       route: "/pages/landing-pages/about-us",
       component: <AboutUs />,
+
+    },
+    {
+      icon: <Icon>
+        shopping_cart
+      </Icon>,
+      name: "Sevice Checkout",
+      route: "/checkout",
+      component: <Checkout />,
     },
   ];
 
@@ -40,13 +50,14 @@ export const getRoutes = (user) => {
     //   component: <ServiceDetail />,
     //   hidden: false,
     // },
-    
+
     {
       name: "category detail",
       route: "/cat-:catId",
       component: <CategoryDetail />,
       hidden: true,
     },
+
 
   ];
 
