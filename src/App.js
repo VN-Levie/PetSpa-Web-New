@@ -12,6 +12,7 @@ import MKBox from "components/MKBox";
 import DefaultFooter from "examples/Footers/DefaultFooter";
 import ServiceDetail from "pages/SpaServices/ServiceDetail";
 import CategoryDetail from "pages/SpaServices/CategoryDetail";
+import { BookingProvider } from "contexts/BookingContext";
 function AppRoutes() {
   const { user, loading } = useAuth();
   const routes = getRoutes(user);
@@ -103,20 +104,22 @@ export default function App() {
   }, [pathname]);
 
   return (
+
     <AuthProvider>
+      <BookingProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
 
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-
-        <AppNavbar />
-        <AppRoutes />
-        <TitleUpdater />
-        <MKBox pt={6} px={1} mt={6}>
-          <DefaultFooter content={footerRoutes} />
-        </MKBox>
-      </ThemeProvider>
-
+          <AppNavbar />
+          <AppRoutes />
+          <TitleUpdater />
+          <MKBox pt={6} px={1} mt={6}>
+            <DefaultFooter content={footerRoutes} />
+          </MKBox>
+        </ThemeProvider>
+      </BookingProvider>
     </AuthProvider>
+
 
   );
 }

@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import Contact from "pages/LandingPages/Author/sections/Contact";
 import Footer from "pages/LandingPages/Author/sections/Footer";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, CircularProgress, Typography } from "@mui/material";
 import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
@@ -14,7 +14,8 @@ import { get } from 'services/apiService';
 function ServiceDetail() {
     const { catId, serviceId } = useParams();
     const [serviceData, setServiceData] = useState(null);
-
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -26,13 +27,42 @@ function ServiceDetail() {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchData();
     }, [serviceId]);
 
-    console.log(catId, serviceId);
+    if (loading) {
+        return (
+            <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <Typography variant="h4" color="error">
+                    {error}
+                </Typography>
+                <Typography variant="body1">Please refresh the page or try again later.</Typography>
+            </Container>
+        );
+    }
+
+    if (!serviceData) {
+        return (
+            <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <Typography variant="h4">No Service Data Found: </Typography>
+                <hr />
+                <Typography variant="body1">The requested service is not available or has been removed.</Typography>
+            </Container>
+        );
+    }
 
     return (
         <>
