@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { API_ENDPOINT } from 'configs/AppConfig';
-
+import { useAuth } from "contexts/AuthContext";
 // Tạo instance axios
 const apiClient = axios.create({
     baseURL: API_ENDPOINT,
@@ -12,27 +12,44 @@ const apiClient = axios.create({
 });
 
 // Hàm refresh token
+// Loại bỏ useAuth ra khỏi hàm async
 const refreshToken = async () => {
-    console.log('Refresh token');
+    
+    console.log('Attempting to refresh token...');
 
     try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) throw new Error('No refresh token found');
 
-        const response = await axios.post(`${API_ENDPOINT}/auth/refresh-token`, {
-            refresh_token: refreshToken,
+        const response = await axios.post(`${API_ENDPOINT}/api/auth/refresh-token`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${refreshToken}`,
+            },
         });
 
         if (response.status === 200) {
-            const { token } = response.data;
-            localStorage.setItem('token', token);
+            const { accessToken, refreshToken: newRefreshToken } = response.data;
+            console.log('response.data.data.token:', response.data.data.token);
+
+            // Sử dụng login truyền từ ngoài vào
+            // login(response.data.data);
+            const token = response.data.data.token;
+
+            console.log('Token refreshed:', token);
             return token;
         }
     } catch (error) {
-        console.error('Refresh token failed', error);
+        console.error('Refresh token failed:', error);
+
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+        }
         return null;
     }
 };
+
 
 // Interceptor thêm token vào request
 apiClient.interceptors.request.use(
@@ -52,17 +69,23 @@ apiClient.interceptors.request.use(
 
 // Interceptor xử lý 401 (Unauthorized)
 apiClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log('response:');
+
+        console.log('#############response:', response);
+
+        return response;  // Trả response đã sửa đổi
+    },
     async (error) => {
-        console.log('Error:', error);
-        console.log('error.response?.status:', error.response?.status);
+        console.log('error:', error);
+        console.log('error.response?.status:', error.response);
 
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             const newToken = await refreshToken();
-
+            console.log('newToken:', newToken);
             if (newToken) {
                 apiClient.defaults.headers['Authorization'] = `Bearer ${newToken}`;
                 originalRequest.headers['Authorization'] = `Bearer ${newToken}`;

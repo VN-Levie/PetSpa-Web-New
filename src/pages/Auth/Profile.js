@@ -59,17 +59,19 @@ function Author() {
         } else if (user) {
             const fetchProfile = async () => {
                 try {
-                    const profileResponse = await get('/api/auth/profile');
+                    const profileResponse = await get('/api/auth/profile', {}, true);
                     if (profileResponse.data.status === 200) {
                         setProfile(profileResponse.data.data);
+
+                        const petCountResponse = await get('/api/user-pet/count', {}, true);
+                        if (petCountResponse.data.status === 200) {
+                            setPetCount(petCountResponse.data.data);
+                        }
+
+                        fetchPets();
+                        fetchPetTypes();
                     } else {
                         navigate("/auth/sign-out");
-                    }
-                    const petCountResponse = await get('/api/user-pet/count');
-                    console.log(petCountResponse);
-
-                    if (petCountResponse.data.status === 200) {
-                        setPetCount(petCountResponse.data.data);
                     }
                 } catch (error) {
                     console.error("Error fetching data:", error);
@@ -82,7 +84,7 @@ function Author() {
 
     const fetchPets = async () => {
         try {
-            const response = await get('/api/user-pet/list');
+            const response = await get('/api/user-pet/list', {}, true);
             if (response.data.status === 200) {
                 setPets(response.data.data);
             }
@@ -102,13 +104,6 @@ function Author() {
         }
     };
 
-    useEffect(() => {
-        if (user) {
-            fetchPets();
-            fetchPetTypes();
-        }
-    }, [user]);
-
     const handleEditPet = (pet) => {
         setCurrentPet(pet);
         setOpenDialog(true);
@@ -124,7 +119,7 @@ function Author() {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },
-            });
+            }, true);
             fetchPets();
             setConfirmDeleteDialog({ open: false, petId: null });
             Swal.fire("Deleted!", "Pet has been deleted.", "success");

@@ -10,11 +10,12 @@ import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 import { get } from 'services/apiService';
-
+import {  useAuth } from "contexts/AuthContext";
 function ServiceDetail() {
+    const { user, loading } = useAuth();
     const { catId, serviceId } = useParams();
     const [serviceData, setServiceData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [meLoading, setMeLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
@@ -28,14 +29,14 @@ function ServiceDetail() {
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
-                setLoading(false);
+                setMeLoading(false);
             }
         };
 
         fetchData();
     }, [serviceId]);
 
-    if (loading) {
+    if (meLoading) {
         return (
             <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                 <CircularProgress />
@@ -199,11 +200,12 @@ function ServiceDetail() {
                                         </MKBox>
                                     </MKBox>
                                 </Grid>
+                              
                                 <Grid item xs={12} lg={7}>
                                     <MKBox component="form" p={2} method="post">
                                         <MKBox px={3} py={{ xs: 2, sm: 6 }}>
                                             <MKTypography variant="h2" mb={1}>
-                                                Say Hi!
+                                                Say Hi! {user?.name}
                                             </MKTypography>
                                             <MKTypography variant="body1" color="text" mb={2}>
                                                 We&apos;d like to talk with you.
