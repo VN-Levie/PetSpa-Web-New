@@ -9,18 +9,20 @@ import VerifyEmail from "pages/Auth/VerifyEmail";
 import ServiceDetail from "pages/SpaServices/ServiceDetail";
 import CategoryDetail from "pages/SpaServices/CategoryDetail";
 import Checkout from "pages/Checkout/Checkout";
+import HotelBooking from "pages/HotelBooking/HotelBooking";
+import Service from "pages/Service/Service";
 
 export const getRoutes = (user) => {
 
 
   const baseRoutes = [
-    {
-      name: "pages",
-      icon: <Icon>dashboard</Icon>,
-      route: "/pages/landing-pages/about-us",
-      component: <AboutUs />,
+    // {
+    //   name: "pages",
+    //   icon: <Icon>dashboard</Icon>,
+    //   route: "/pages/landing-pages/about-us",
+    //   component: <AboutUs />,
 
-    },
+    // },
     {
       icon: <Icon>
         shopping_cart
@@ -28,6 +30,20 @@ export const getRoutes = (user) => {
       name: "Sevice Checkout",
       route: "/checkout",
       component: <Checkout />,
+    },
+    {
+      icon: <Icon>hotel</Icon>,
+      name: "Hotel Booking",
+      route: "/hotel-booking",
+      component: <HotelBooking />,
+    },
+    {
+      icon: <Icon>
+        shopping_cart
+      </Icon>,
+      name: "Services",
+      route: "/services",
+      component: <Service />,
     },
   ];
 
