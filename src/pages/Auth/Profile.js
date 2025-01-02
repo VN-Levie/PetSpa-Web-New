@@ -186,8 +186,9 @@ function Author() {
                 handleDialogClose();
             }
         } catch (error) {
-            console.error("Error submitting pet:", error);
-            Swal.fire("Error!", "There was an error submitting the pet.", "error");
+            console.error("Error submitting pet:", error.response.data.message);
+            var message = error.response.data.message ?? "There was an error submitting the pet.";
+            Swal.fire("Error!", message, "error");
         }
     };
 
@@ -315,7 +316,7 @@ function Author() {
                                     />
                                     <TextField
                                         {...register("height")}
-                                        label="Height"
+                                        label="Height (cm)"
                                         type="number"
                                         fullWidth
                                         margin="normal"
@@ -324,7 +325,7 @@ function Author() {
                                     />
                                     <TextField
                                         {...register("weight")}
-                                        label="Weight"
+                                        label="Weight (kg)"
                                         type="number"
                                         fullWidth
                                         margin="normal"
@@ -358,7 +359,10 @@ function Author() {
                                         ))}
                                     </Select>
                                     <input
-                                        {...register("file")}
+                                        name={register("file").name}
+                                        ref={register("file").ref}
+                                        onChange={register("file").onChange}
+                                        onBlur={register("file").onBlur}
                                         type="file"
                                         accept="image/*"
                                         required={!currentPet}
