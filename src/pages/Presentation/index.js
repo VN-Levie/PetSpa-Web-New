@@ -20,6 +20,8 @@ import Pages from "pages/Presentation/sections/Pages";
 
 // Images
 import bgImage from "assets/images/banner3.png";
+import ServiceBlocks from "./sections/DesignBlocks";
+
 
 function Presentation() {
   return (
@@ -67,7 +69,7 @@ function Presentation() {
       >
         <Counters />
         <Information />
-        {/* <DesignBlocks /> */}
+        <ServiceBlocks />
         <Pages />
 
 
