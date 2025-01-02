@@ -37,7 +37,7 @@ import TransparentBlogCard from "examples/Cards/BlogCards/TransparentBlogCard";
 import BackgroundBlogCard from "examples/Cards/BlogCards/BackgroundBlogCard";
 import { HorizontalTeamCardWithActions } from "examples/Cards/TeamCards/HorizontalTeamCard";
 import CenteredBlogCard from "examples/Cards/BlogCards/CenteredBlogCard";
-
+import { get, post } from 'services/apiService';
 import Swal from "sweetalert2";
 
 function Author() {
@@ -59,23 +59,15 @@ function Author() {
         } else if (user) {
             const fetchProfile = async () => {
                 try {
-                    const profileResponse = await axios.get(`${API_ENDPOINT}/api/auth/profile`, {
-                        headers: {
-                            Authorization: `Bearer ${user.token}`,
-                        },
-                    });
+                    const profileResponse = await get('/api/auth/profile');
                     if (profileResponse.data.status === 200) {
                         setProfile(profileResponse.data.data);
                     } else {
                         navigate("/auth/sign-out");
                     }
+                    const petCountResponse = await get('/api/user-pet/count');
+                    console.log(petCountResponse);
 
-                    const petCountResponse = await axios.get(`${API_ENDPOINT}/api/user-pet/count`, {
-                        headers: {
-                            Authorization: `Bearer ${user.token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    });
                     if (petCountResponse.data.status === 200) {
                         setPetCount(petCountResponse.data.data);
                     }
@@ -90,11 +82,7 @@ function Author() {
 
     const fetchPets = async () => {
         try {
-            const response = await axios.get(`${API_ENDPOINT}/api/user-pet/list`, {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            });
+            const response = await get('/api/user-pet/list');
             if (response.data.status === 200) {
                 setPets(response.data.data);
             }
@@ -105,11 +93,7 @@ function Author() {
 
     const fetchPetTypes = async () => {
         try {
-            const response = await axios.get(`${API_ENDPOINT}/api/user-pet/pet-type`, {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            });
+            const response = await get('/api/user-pet/pet-type');
             if (response.data.status === 200) {
                 setPetTypes(response.data.data);
             }
@@ -309,7 +293,7 @@ function Author() {
                                 ))}
                             </Grid>
                         </Container>
-                        <Dialog open={openDialog} onClose={handleDialogClose}>
+                        <Dialog open={openDialog} onClose={handleDialogClose} sx={{ zIndex: 999 }}>
                             <DialogTitle>{currentPet ? "Edit Pet" : "Add Pet"}</DialogTitle>
                             <DialogContent>
                                 <form onSubmit={handleSubmit(handleDialogSubmit)}>
