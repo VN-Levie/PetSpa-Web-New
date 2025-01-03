@@ -122,6 +122,7 @@ function Author() {
             try {
                 const response = await get(`${API_ENDPOINT}${pet.avatarUrl}`, {}, false);
                 if (response.status === 200) {
+                    attempts = 3;
                     return `${API_ENDPOINT}${pet.avatarUrl}`;
                 }
             } catch (error) {
