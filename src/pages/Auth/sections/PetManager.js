@@ -440,7 +440,7 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
                         </Select>
                         {currentPet && currentImage && (
                             <>
-                                <MKTypography variant="body2" color="textSecondary" style={{ marginTop: "10px" }}>
+                                <MKTypography variant="body2" color="inherit" style={{ marginTop: "10px" }}>
                                     Current Pet Image:
                                 </MKTypography>
                                 <img src={currentImage} alt="Pet" style={{ width: "50%", display: "block", marginLeft: "auto", marginRight: "auto", borderRadius: "6px" }} />
@@ -460,7 +460,7 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
                         />
                         {imagePreview && (
                             <>
-                                <MKTypography variant="body2" color="textSecondary" style={{ marginTop: "10px" }}>
+                                <MKTypography variant="body2" color="inherit" style={{ marginTop: "10px" }}>
                                     Preview Image:
                                 </MKTypography>
                                 <MKAlert color="light" textAlign="center">
