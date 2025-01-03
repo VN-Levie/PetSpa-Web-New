@@ -106,8 +106,6 @@ export const get = async (endpoint, params = {}, needJwt = false) => {
     if (needJwt) {
         const token = localStorage.getItem('token');
         if (token) {
-            console.log('token:', token);
-            
             config.headers = { 'Authorization': `Bearer ${token}` };
         }
     }

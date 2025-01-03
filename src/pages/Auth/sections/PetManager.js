@@ -15,7 +15,7 @@ import MKPagination from "components/MKPagination";
 import MKTypography from "components/MKTypography";
 import { API_ENDPOINT } from "configs/AppConfig";
 import { HorizontalTeamCardWithActions } from "examples/Cards/TeamCards/HorizontalTeamCard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { get, post } from 'services/apiService';
 import Swal from "sweetalert2";
 const PetManager = ({ profile, petCount, onCountChange }) => {
@@ -33,27 +33,99 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
     const [searchParams, setSearchParams] = useState({ name: "", petTypeId: "" });
     const [petsLoading, setPetsLoading] = useState(false);
     const { register, handleSubmit, reset } = useForm();
+    const [intervalId, setIntervalId] = useState(null);
+    const lastFetchTime = useRef(Date.now());
+    const timeoutId = useRef(null);
+    const petManagerRef = useRef(null);
     useEffect(() => {
         fetchPets();
         fetchPetTypes();
     }, []);
-    useEffect(() => {
 
-        const interval = setInterval(async () => {
-            try {
-                const petCountResponse = await get('/api/user-pet/count', {}, true);
-                if (petCountResponse.data.status === 200 && petCountResponse.data.data !== petCount) {
-                    onCountChange(petCountResponse.data.data);
-                    fetchPets();
-                }
-            } catch (error) {
-                console.error("Error fetching pet count:", error);
+    const fetchPetCount = async () => {
+        console.log("Fetching pet count...");
+
+        try {
+            const petCountResponse = await get('/api/user-pet/count', {}, true);
+            if (petCountResponse.data.status === 200 && petCountResponse.data.data !== petCount) {
+                onCountChange(petCountResponse.data.data);
+                // fetchPets();
+                lastFetchTime.current = Date.now();  // Cập nhật thời điểm fetch cuối
             }
-        }, 3000);
+        } catch (error) {
+            console.error("Error fetching pet count:", error);
+        }
+    };
+    const startPolling = () => {
+        console.log("Starting polling... at: " + Date.now());
 
-        return () => clearInterval(interval);
+        // Fetch ngay nếu lần cuối cách 30 giây
+        if (Date.now() - lastFetchTime.current > 30000) {
+            fetchPetCount();
+        }
 
-    }, [petCount]);
+        // Bắt đầu polling mỗi 3 giây
+        const id = setInterval(fetchPetCount, 3000);
+        setIntervalId(id);
+
+        // Đặt timeout để ngừng polling sau 30 giây nếu không tương tác
+        timeoutId.current = setTimeout(stopPolling, 30000);
+    };
+
+    const stopPolling = () => {
+        console.log("Stopping polling... at: " + Date.now());
+        if (intervalId) {
+            clearInterval(intervalId);
+            setIntervalId(null);
+        }
+        if (timeoutId.current) {
+            clearTimeout(timeoutId.current);
+        }
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    startPolling();
+                } else {
+                    stopPolling();
+                }
+            },
+            {
+                threshold: 0.5, // Bắt đầu khi component chiếm ít nhất 50% viewport
+            }
+        );
+
+        if (petManagerRef.current) {
+            observer.observe(petManagerRef.current);
+        }
+
+        // Xử lý visibilitychange để quản lý focus tab
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+
+                if (Date.now() - lastFetchTime.current > 30000) {
+                    fetchPetCount();  // Fetch ngay nếu vắng mặt trên 30 giây
+                }
+                startPolling();
+            } else {
+                stopPolling();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        // Bắt đầu polling khi component mount
+        startPolling();
+
+        return () => {
+            // Cleanup khi component unmount
+            observer.disconnect();
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            stopPolling();
+        };
+    }, []);
     const fetchPetImage = async (pet) => {
         let attempts = 0;
         while (attempts < 3) {
