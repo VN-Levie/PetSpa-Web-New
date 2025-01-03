@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 
 // react-router components
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -39,6 +39,8 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   const [mobileView, setMobileView] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const location = useLocation();
+
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
 
   useEffect(() => {
@@ -65,6 +67,12 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
+
+  useEffect(() => {
+    setMobileNavbar(false);
+    setDropdown(null);
+    setNestedDropdown(null);
+  }, [location]);
 
   const renderNavbarItems = routes.map(({ name, icon, href, route, collapse, hidden }) => {
     if ((name === "sign in" || name === "sign up") && isLoggedIn) return null;

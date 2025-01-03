@@ -99,6 +99,12 @@ export default function App() {
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
+    // Close navbar and collapse
+    const closeNavbar = () => {
+      const event = new Event("closeNavbar");
+      window.dispatchEvent(event);
+    };
+    closeNavbar();
   }, [pathname]);
 
   return (

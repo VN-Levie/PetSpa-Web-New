@@ -5,9 +5,6 @@ import { useAuth } from "contexts/AuthContext";
 // Tạo instance axios
 const apiClient = axios.create({
     baseURL: API_ENDPOINT,
-    headers: {
-        'Content-Type': 'application/json',
-    },
     timeout: 30000, // Timeout 30s
 });
 // const { login } = useAuth();
@@ -63,6 +60,9 @@ apiClient.interceptors.request.use(
                 config.headers['Authorization'] = `Bearer ${token}`;
             }
         }
+        if (config.method === 'get' && !config.url.includes('uploads')) {
+            config.headers['Content-Type'] = 'application/json';
+        }
         return config;
     },
     (error) => {
@@ -106,6 +106,8 @@ export const get = async (endpoint, params = {}, needJwt = false) => {
     if (needJwt) {
         const token = localStorage.getItem('token');
         if (token) {
+            console.log('token:', token);
+            
             config.headers = { 'Authorization': `Bearer ${token}` };
         }
     }

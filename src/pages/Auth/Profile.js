@@ -1,7 +1,7 @@
 // @mui material components
 import Card from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
-import { TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, DialogContentText } from "@mui/material";
+import { TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, DialogContentText, Skeleton } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import MKBox from "components/MKBox";
@@ -39,6 +39,7 @@ import { HorizontalTeamCardWithActions } from "examples/Cards/TeamCards/Horizont
 import CenteredBlogCard from "examples/Cards/BlogCards/CenteredBlogCard";
 import { get, post } from 'services/apiService';
 import Swal from "sweetalert2";
+import MKAlert from "components/MKAlert";
 
 function Author() {
 
@@ -52,6 +53,8 @@ function Author() {
     const [currentPet, setCurrentPet] = useState(null);
     const [petTypes, setPetTypes] = useState([]);
     const [confirmDeleteDialog, setConfirmDeleteDialog] = useState({ open: false, petId: null });
+    const [imagePreview, setImagePreview] = useState(null);
+    const [currentImage, setCurrentImage] = useState(null);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -70,27 +73,74 @@ function Author() {
 
                         fetchPets();
                         fetchPetTypes();
-                        useEffect(() => {
-                            document.documentElement.scrollTop = 0;
-                            document.scrollingElement.scrollTop = 0;
-                          }, [user]);
                     } else {
                         navigate("/auth/sign-out");
                     }
                 } catch (error) {
                     console.error("Error fetching data:", error);
-                    // navigate("/auth/sign-out");
                 }
             };
             fetchProfile();
         }
     }, [user, loading, navigate]);
 
+    useEffect(() => {
+        if (loading) {
+            console.log("Loading...");
+
+            return;
+        }
+        if (user && !loading) {
+            const interval = setInterval(async () => {
+                try {
+                    const petCountResponse = await get('/api/user-pet/count', {}, true);
+                    if (petCountResponse.data.status === 200 && petCountResponse.data.data !== petCount) {
+                        setPetCount(petCountResponse.data.data);
+                        fetchPets();
+                    }
+                } catch (error) {
+                    console.error("Error fetching pet count:", error);
+                }
+            }, 500000);
+
+            return () => clearInterval(interval);
+        }
+    }, [user, petCount, loading]);
+
+
+    const useScrollToTop = (dependency) => {
+        useEffect(() => {
+            document.documentElement.scrollTop = 0;
+            document.scrollingElement.scrollTop = 0;
+        }, [dependency]);
+    };
+    useScrollToTop(user);
+
+    const fetchPetImage = async (pet) => {
+        let attempts = 0;
+        while (attempts < 3) {
+            try {
+                const response = await get(`${API_ENDPOINT}${pet.avatarUrl}`, {}, false);
+                if (response.status === 200) {
+                    return `${API_ENDPOINT}${pet.avatarUrl}`;
+                }
+            } catch (error) {
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+        return null;
+    };
+
     const fetchPets = async () => {
         try {
             const response = await get('/api/user-pet/list', {}, true);
             if (response.data.status === 200) {
-                setPets(response.data.data);
+                const petsWithImages = await Promise.all(response.data.data.map(async (pet) => {
+                    const image = await fetchPetImage(pet);
+                    return { ...pet, image };
+                }));
+                setPets(petsWithImages);
             }
         } catch (error) {
             console.error("Error fetching pets:", error);
@@ -110,6 +160,15 @@ function Author() {
 
     const handleEditPet = (pet) => {
         setCurrentPet(pet);
+        reset({
+            name: pet.name,
+            description: pet.description,
+            height: pet.height,
+            weight: pet.weight,
+            petTypeId: pet.petTypeId,
+        });
+        setImagePreview(null);
+        setCurrentImage(pet.image || null);
         setOpenDialog(true);
     };
 
@@ -119,11 +178,7 @@ function Author() {
 
     const confirmDelete = async () => {
         try {
-            await axios.post(`${API_ENDPOINT}/api/user-pet/delete`, { id: confirmDeleteDialog.petId }, {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            }, true);
+            await post(`${API_ENDPOINT}/api/user-pet/delete`, { id: confirmDeleteDialog.petId }, true);
             fetchPets();
             setConfirmDeleteDialog({ open: false, petId: null });
             Swal.fire("Deleted!", "Pet has been deleted.", "success");
@@ -140,6 +195,15 @@ function Author() {
     const handleDialogClose = () => {
         setOpenDialog(false);
         setCurrentPet(null);
+        setImagePreview(null);
+        setCurrentImage(null);
+        reset({
+            name: null,
+            description: null,
+            height: null,
+            weight: null,
+            petTypeId: null,
+        });
     };
 
     const handleDialogSubmit = async (data) => {
@@ -147,47 +211,46 @@ function Author() {
         const formData = new FormData();
         formData.append("file", data.file[0]);
 
+        const petDTO = {
+            name: data.name,
+            description: data.description,
+            height: data.height,
+            weight: data.weight,
+            petTypeId: data.petTypeId,
+            userId: profile.id,
+            avatarUrl: "",
+        };
 
         if (currentPet) {
-            formData.append("petDTO", JSON.stringify({
-                id: currentPet.id,
-                name: data.name,
-                description: data.description,
-                height: data.height,
-                weight: data.weight,
-                petTypeId: data.petTypeId,
-                userId: profile.id,
-                avatarUrl: "",
-            }));
-        } else {
-            formData.append("petDTO", JSON.stringify({
-                name: data.name,
-                description: data.description,
-                height: data.height,
-                weight: data.weight,
-                petTypeId: data.petTypeId,
-                userId: profile.id,
-                avatarUrl: "",
-            }));
+            petDTO.id = currentPet.id;
         }
+
+        formData.append("petDTO", JSON.stringify(petDTO));
 
         try {
             const endpoint = currentPet ? `${API_ENDPOINT}/api/user-pet/edit` : `${API_ENDPOINT}/api/user-pet/add`;
-            const response = await axios.post(endpoint, formData, {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = await post(endpoint, formData, true);
             if (response.data.status === 200) {
                 Swal.fire("Success!", currentPet ? "Pet edited successfully" : "Pet added successfully", "success");
                 fetchPets();
                 handleDialogClose();
             }
         } catch (error) {
-            console.error("Error submitting pet:", error.response.data.message);
-            var message = error.response.data.message ?? "There was an error submitting the pet.";
+            const message = error.response?.data?.message ?? "There was an error submitting the pet.";
             Swal.fire("Error!", message, "error");
+        }
+    };
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null);
         }
     };
 
@@ -280,9 +343,10 @@ function Author() {
                             <Grid container spacing={3} mt={2}>
                                 {pets.map((pet) => (
 
+
                                     <Grid item xs={12} sm={12} lg={6} key={pet.id}>
                                         <HorizontalTeamCardWithActions
-                                            image={`${API_ENDPOINT}${pet.avatarUrl}`}
+                                            image={pet.image || <Skeleton variant="rectangular" width={210} height={118} />}
                                             name={pet.name}
                                             position={{ color: "info", label: `Height: ${pet.height} cm, Weight: ${pet.weight} kg` }}
                                             description={pet.description}
@@ -357,15 +421,36 @@ function Author() {
                                             </MenuItem>
                                         ))}
                                     </Select>
+                                    {currentPet && currentImage && (
+                                        <>
+                                            <MKTypography variant="body2" color="textSecondary" style={{ marginTop: "10px" }}>
+                                                Current Pet Image:
+                                            </MKTypography>
+                                            <img src={currentImage} alt="Pet" style={{ width: "50%", display: "block", marginLeft: "auto", marginRight: "auto", borderRadius: "6px" }} />
+                                        </>
+                                    )}
                                     <input
                                         name={register("file").name}
                                         ref={register("file").ref}
-                                        onChange={register("file").onChange}
+                                        onChange={(e) => {
+                                            register("file").onChange(e);
+                                            handleImageChange(e);
+                                        }}
                                         onBlur={register("file").onBlur}
                                         type="file"
                                         accept="image/*"
                                         required={!currentPet}
                                     />
+                                    {imagePreview && (
+                                        <>
+                                            <MKTypography variant="body2" color="textSecondary" style={{ marginTop: "10px" }}>
+                                                Preview Image:
+                                            </MKTypography>
+                                            <MKAlert color="light" textAlign="center">
+                                                <img src={imagePreview} alt="Preview" style={{ width: "50%", display: "block", marginLeft: "auto", marginRight: "auto", borderRadius: "6px" }} />
+                                            </MKAlert>
+                                        </>
+                                    )}
                                     <DialogActions>
                                         <MKButton onClick={handleDialogClose} color="secondary">Cancel</MKButton>
                                         <MKButton type="submit" variant="contained" color="primary">{currentPet ? "Save" : "Add"}</MKButton>
@@ -385,138 +470,11 @@ function Author() {
                                 <MKButton onClick={confirmDelete} color="primary">Delete</MKButton>
                             </DialogActions>
                         </Dialog>
-                        <Container>
-                            <Grid container>
-                                <Grid item xs={12} md={8} sx={{ mb: 6 }}>
-                                    <MKTypography variant="h3" color="white">
-                                        The Executive Team
-                                    </MKTypography>
-                                    <MKTypography variant="body2" color="white" opacity={0.8}>
-                                        There&apos;s nothing I really wanted to do in life that I wasn&apos;t able to get good
-                                        at. That&apos;s my skill.
-                                    </MKTypography>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3}>
-                                {/* <Grid item xs={12} md={6} lg={4}>
-                                    <MKBox mt={3}>
-                                        <HorizontalTeamCard
-                                            image={team1}
-                                            title="Single room in the center of the city"
-                                            description="As Uber works through a huge amount of internal management turmoil, the company is also consolidating more of its international business."
-                                            categories={["Private Room", "1 Guest", "1 Sofa"]}
-                                            action='View'
-                                        />
-                                    </MKBox>
-                                </Grid> */}
-                                <Grid item xs={12} lg={6}>
-                                    <MKBox mb={1}>
-                                        <HorizontalTeamCard
-                                            image={team1}
-                                            name="Emma Roberts"
-                                            position={{ color: "info", label: "UI Designer" }}
-                                            description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-                                        />
-                                    </MKBox>
-                                </Grid>
-                                <Grid item xs={12} lg={6}>
-                                    <MKBox mb={1}>
-                                        <HorizontalTeamCard
-                                            image={team2}
-                                            name="William Pearce"
-                                            position={{ color: "info", label: "Boss" }}
-                                            description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-                                        />
-                                    </MKBox>
-                                </Grid>
-                                <Grid item xs={12} lg={6}>
-                                    <MKBox mb={{ xs: 1, lg: 0 }}>
-                                        <HorizontalTeamCard
-                                            image={team3}
-                                            name="Ivana Flow"
-                                            position={{ color: "info", label: "Athlete" }}
-                                            description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-                                        />
-                                    </MKBox>
-                                </Grid>
-                                <Grid item xs={12} lg={6}>
-                                    <MKBox mb={{ xs: 1, lg: 0 }}>
-                                        <HorizontalTeamCard
-                                            image={team4}
-                                            name="Marquez Garcia"
-                                            position={{ color: "info", label: "JS Developer" }}
-                                            description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-                                        />
-                                    </MKBox>
-                                </Grid>
-                            </Grid>
-                        </Container>
+
                     </MKBox>
-                    <MKBox component="section" py={2}>
-                        <Container>
-                            <Grid container item xs={12} lg={6}>
-                                <MKTypography variant="h3" mb={6}>
-                                    Check my latest blogposts
-                                </MKTypography>
-                            </Grid>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} sm={6} lg={3}>
-                                    <TransparentBlogCard
-                                        image={post1}
-                                        title="Rover raised $65 million"
-                                        description="Finding temporary housing for your dog should be as easy as renting an Airbnb. That’s the idea behind Rover ..."
-                                        action={{
-                                            type: "internal",
-                                            route: "/pages/blogs/author",
-                                            color: "info",
-                                            label: "read more",
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6} lg={3}>
-                                    <TransparentBlogCard
-                                        image={post2}
-                                        title="MateLabs machine learning"
-                                        description="If you’ve ever wanted to train a machine learning model and integrate it with IFTTT, you now can with ..."
-                                        action={{
-                                            type: "internal",
-                                            route: "/pages/blogs/author",
-                                            color: "info",
-                                            label: "read more",
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6} lg={3}>
-                                    <TransparentBlogCard
-                                        image={post3}
-                                        title="MateLabs machine learning"
-                                        description="If you’ve ever wanted to train a machine learning model and integrate it with IFTTT, you now can with ..."
-                                        action={{
-                                            type: "internal",
-                                            route: "/pages/blogs/author",
-                                            color: "info",
-                                            label: "read more",
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6} lg={3}>
-                                    <BackgroundBlogCard
-                                        image={post4}
-                                        title="Flexible work hours"
-                                        description="Rather than worrying about switching offices every couple years, you stay in the same place."
-                                        action={{
-                                            type: "internal",
-                                            route: "/pages/blogs/author",
-                                            label: "read more",
-                                        }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Container>
-                    </MKBox>
+
                 </Card>
-                <Contact />
-                <Footer />
+
             </MKBox>
         </>
     );

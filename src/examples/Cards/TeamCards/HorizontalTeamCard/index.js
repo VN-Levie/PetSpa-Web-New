@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 // @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 
 //  components
 import MKBox from "components/MKBox";
@@ -68,16 +69,28 @@ function HorizontalTeamCardWithActions({ image, name, position, description, onE
       <Grid container>
         <Grid item xs={12} md={6} lg={4} sx={{ mt: -6 }}>
           <MKBox width="100%" pt={2} pb={1} px={2}>
-            <MKBox
-              component="img"
-              src={image}
-              alt={name}
-              width="100%"
-              height="200px"  // Chiều cao cố định
-              style={{ objectFit: 'cover' }}  // Đảm bảo ảnh luôn phủ kín mà không méo
-              borderRadius="md"
-              shadow="lg"
-            />
+            {typeof image === 'string' ? (
+              <MKBox
+                component="img"
+                src={image}
+                alt={name}
+                width="100%"
+                height="200px"  // Chiều cao cố định
+                style={{ objectFit: 'cover' }}  // Đảm bảo ảnh luôn phủ kín mà không méo
+                borderRadius="md"
+                shadow="lg"
+              />
+            ) : (
+              <MKBox
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                width="100%"
+                height="200px"
+              >
+                <CircularProgress />
+              </MKBox>
+            )}
           </MKBox>
         </Grid>
         <Grid item xs={12} md={6} lg={8} sx={{ my: "auto" }}>
