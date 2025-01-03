@@ -70,6 +70,10 @@ function Author() {
 
                         fetchPets();
                         fetchPetTypes();
+                        useEffect(() => {
+                            document.documentElement.scrollTop = 0;
+                            document.scrollingElement.scrollTop = 0;
+                          }, [user]);
                     } else {
                         navigate("/auth/sign-out");
                     }

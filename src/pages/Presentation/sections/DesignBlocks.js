@@ -32,8 +32,19 @@ import ExampleCard from "pages/Presentation/components/ExampleCard";
 import { useEffect, useState } from "react";
 import { get } from "services/apiService";
 
+import ServiceDetail from "pages/SpaServices/ServiceDetail";
+
 function ServiceBlocks() {
   const [data, setData] = useState([]);
+  const [selectedService, setSelectedService] = useState({ catId: null, serviceId: null });
+
+  const handleOpenModal = (catId, serviceId) => {
+    setSelectedService({ catId, serviceId });
+  };
+
+  const handleCloseModal = () => {
+    setSelectedService({ catId: null, serviceId: null });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,9 +80,9 @@ function ServiceBlocks() {
           {items.map(({ imageUrl: image, name, description, route, id: serviceId }) => {
             return (
               <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
-                <Link to={`/cat/${catId}/service/${serviceId}`}>
+                <MKBox onClick={() => handleOpenModal(catId, serviceId)}>
                   <ExampleCard image={image} name={name + serviceId} description={description} />
-                </Link>
+                </MKBox>
               </Grid>
             );
           })}
@@ -108,6 +119,14 @@ function ServiceBlocks() {
         </Grid>
       </Container>
       <Container sx={{ mt: 6 }}>{renderData}</Container>
+      {selectedService.serviceId && (
+        <ServiceDetail
+          open={!!selectedService.serviceId}
+          onClose={handleCloseModal}
+          catId={selectedService.catId}
+          serviceId={selectedService.serviceId}
+        />
+      )}
     </MKBox>
   );
 }
