@@ -109,7 +109,7 @@ function ServiceCard({ image, name, description, pro, ...rest }) {
 // Setting default props for the ExampleCard
 ServiceCard.defaultProps = {
   name: "",
-  description: 0,
+  description: "",
   pro: false,
 };
 
@@ -117,7 +117,7 @@ ServiceCard.defaultProps = {
 ServiceCard.propTypes = {
   image: PropTypes.string.isRequired,
   name: PropTypes.string,
-  description: PropTypes.number,
+  description: PropTypes.string,
   pro: PropTypes.bool,
 };
 

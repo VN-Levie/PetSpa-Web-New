@@ -10,11 +10,11 @@ const apiClient = axios.create({
     },
     timeout: 30000, // Timeout 30s
 });
-
+// const { login } = useAuth();
 // Hàm refresh token
 // Loại bỏ useAuth ra khỏi hàm async
 const refreshToken = async () => {
-    
+
     console.log('Attempting to refresh token...');
 
     try {
@@ -29,15 +29,18 @@ const refreshToken = async () => {
         });
 
         if (response.status === 200) {
-            const { accessToken, refreshToken: newRefreshToken } = response.data;
-            console.log('response.data.data.token:', response.data.data.token);
+
+            console.log('response.data.data.token:', response.data.data);
 
             // Sử dụng login truyền từ ngoài vào
             // login(response.data.data);
-            const token = response.data.data.token;
-
-            console.log('Token refreshed:', token);
-            return token;
+            const accessToken = response.data.data.token;
+            const refreshToken = response.data.data.refreshToken;
+            localStorage.setItem('token', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            // login({ token: accessToken, refreshToken: newRefreshToken, ...user });
+            console.log('Token refreshed:', accessToken);
+            return accessToken;
         }
     } catch (error) {
         console.error('Refresh token failed:', error);
@@ -70,15 +73,15 @@ apiClient.interceptors.request.use(
 // Interceptor xử lý 401 (Unauthorized)
 apiClient.interceptors.response.use(
     (response) => {
-        console.log('response:');
+        // console.log('response:');
 
-        console.log('#############response:', response);
+        // console.log('#############response:', response);
 
         return response;  // Trả response đã sửa đổi
     },
     async (error) => {
-        console.log('error:', error);
-        console.log('error.response?.status:', error.response);
+        // console.log('error:', error);
+        // console.log('error.response?.status:', error.response);
 
         const originalRequest = error.config;
 

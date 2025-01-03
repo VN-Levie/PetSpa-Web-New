@@ -74,7 +74,7 @@ function HorizontalTeamCardWithActions({ image, name, position, description, onE
               alt={name}
               width="100%"
               height="200px"  // Chiều cao cố định
-              objectFit="cover"  // Đảm bảo ảnh luôn phủ kín mà không méo
+              style={{ objectFit: 'cover' }}  // Đảm bảo ảnh luôn phủ kín mà không méo
               borderRadius="md"
               shadow="lg"
             />

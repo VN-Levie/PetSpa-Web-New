@@ -87,8 +87,6 @@ function TitleUpdater() {
     document.title = currentRoute
       ? `${name} | Pet Spa`
       : "Pet Spa | Best Service for Your Pets";
-
-    console.log("currentRoute", currentRoute);
   }, [location, routes, loading]);
 
   return null;  // Không render gì, chỉ cập nhật title
@@ -105,20 +103,19 @@ export default function App() {
 
   return (
 
-    <AuthProvider>
-      <BookingProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
 
-          <AppNavbar />
-          <AppRoutes />
-          <TitleUpdater />
-          <MKBox pt={6} px={1} mt={6}>
-            <DefaultFooter content={footerRoutes} />
-          </MKBox>
-        </ThemeProvider>
-      </BookingProvider>
-    </AuthProvider>
+    <BookingProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+
+        <AppNavbar />
+        <AppRoutes />
+        <TitleUpdater />
+        <MKBox pt={6} px={1} mt={6}>
+          <DefaultFooter content={footerRoutes} />
+        </MKBox>
+      </ThemeProvider>
+    </BookingProvider>
 
 
   );
