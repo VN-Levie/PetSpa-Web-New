@@ -29,7 +29,7 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
     const [currentImage, setCurrentImage] = useState(null);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 10;
+    const pageSize = 3;
     const [searchParams, setSearchParams] = useState({ name: "", petTypeId: "" });
     const [petsLoading, setPetsLoading] = useState(false);
     const { register, handleSubmit, reset } = useForm();
