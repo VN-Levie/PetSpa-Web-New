@@ -11,6 +11,7 @@ import CategoryDetail from "pages/SpaServices/CategoryDetail";
 import Checkout from "pages/Checkout/Checkout";
 import HotelBooking from "pages/HotelBooking/HotelBooking";
 import Service from "pages/Service/Service";
+import Shop from "pages/Shop";
 
 export const getRoutes = (user) => {
 
@@ -44,6 +45,12 @@ export const getRoutes = (user) => {
       name: "Services",
       route: "/services",
       component: <Service />,
+    },
+    {
+      icon: <Icon>store</Icon>,
+      name: "Shop",
+      route: "/shop",
+      component: <Shop />,
     },
   ];
 

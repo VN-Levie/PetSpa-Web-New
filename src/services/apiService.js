@@ -61,7 +61,7 @@ apiClient.interceptors.request.use(
             }
         }
         if (config.method === 'get' && !config.url.includes('uploads')) {
-            config.headers['Content-Type'] = 'application/json';
+            // config.headers['Content-Type'] = 'application/json';
         }
         return config;
     },
@@ -88,7 +88,6 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             const newToken = await refreshToken();
-            console.log('newToken:', newToken);
             if (newToken) {
                 apiClient.defaults.headers['Authorization'] = `Bearer ${newToken}`;
                 originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
