@@ -14,7 +14,7 @@ import Grow from "@mui/material/Grow";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import MuiLink from "@mui/material/Link";
-
+import Badge from "@mui/material/Badge";
 //  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
@@ -74,7 +74,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
     setNestedDropdown(null);
   }, [location]);
 
-  const renderNavbarItems = routes.map(({ name, icon, href, route, collapse, hidden }) => {
+  const renderNavbarItems = routes.map(({ name, icon, href, route, collapse, hidden, count }) => {
     if ((name === "sign in" || name === "sign up") && isLoggedIn) return null;
     if (name === "sign out" && !isLoggedIn) return null;
     if (name === "profile" && !isLoggedIn) return null;
@@ -86,6 +86,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
         icon={icon}
         href={href}
         route={route}
+        count={count}
         collapse={Boolean(collapse)}
         onMouseEnter={({ currentTarget }) => {
           if (collapse) {

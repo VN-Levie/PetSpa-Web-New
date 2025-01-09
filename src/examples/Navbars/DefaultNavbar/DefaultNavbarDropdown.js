@@ -11,6 +11,7 @@ import Icon from "@mui/material/Icon";
 //  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
+import { Badge } from "@mui/material";
 
 function DefaultNavbarDropdown({
   name,
@@ -21,6 +22,7 @@ function DefaultNavbarDropdown({
   href,
   route,
   collapse,
+  count,
   ...rest
 }) {
   const linkComponent = {
@@ -65,7 +67,21 @@ function DefaultNavbarDropdown({
           sx={{ fontWeight: "100%", ml: 1, mr: 0.25 }}
         >
           {name}
+          <Badge
+            badgeContent={count > 0 ? count : null}
+            color="error"
+            overlap="rectangular"
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            sx={{
+              // position: "absolute",
+              animation: count > 0 ? "badge-pulse 0.5s infinite alternate" : "none",
+            }}
+          />
         </MKTypography>
+
         <MKTypography variant="body2" color={light ? "white" : "dark"} ml="auto">
           <Icon sx={{ fontWeight: "normal", verticalAlign: "middle" }}>
             {collapse && "keyboard_arrow_down"}

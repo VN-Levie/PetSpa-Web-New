@@ -12,9 +12,13 @@ import Checkout from "pages/Checkout/Checkout";
 import HotelBooking from "pages/HotelBooking/HotelBooking";
 import Service from "pages/Service/Service";
 import Shop from "pages/Shop";
-
+import CartDetail from "pages/CartDetail";
+import ProductDetail from "pages/ProductDetail";
+import ProductCheckout from "pages/ProductCheckout";
+import { useCart } from "contexts/CartContext";
 export const getRoutes = (user) => {
-
+  const { cart } = useCart();
+  const countCartItems = cart.length;
 
   const baseRoutes = [
     // {
@@ -51,6 +55,27 @@ export const getRoutes = (user) => {
       name: "Shop",
       route: "/shop",
       component: <Shop />,
+    },
+    {
+      icon: <Icon>shopping_cart</Icon>,
+      name: "Cart",
+      route: "/cart",
+      component: <CartDetail />,
+      count: countCartItems,
+    },
+    {
+      icon: <Icon>info</Icon>,
+      name: "Product Detail",
+      route: "/product/:productId",
+      component: <ProductDetail />,
+      hidden: true,
+    },
+    {
+      icon: <Icon>shopping_cart</Icon>,
+      name: "Product Checkout",
+      route: "/product-checkout",
+      component: <ProductCheckout />,
+      hidden: true,
     },
   ];
 

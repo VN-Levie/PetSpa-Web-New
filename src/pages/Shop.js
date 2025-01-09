@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, TextField, Select, MenuItem, CircularProgress, Card, CardMedia, CardContent, Typography, InputLabel, FormControl, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Container, Grid, TextField, Select, MenuItem, CircularProgress, Card, CardMedia, CardContent, Typography, InputLabel, FormControl, ToggleButton, ToggleButtonGroup, Button, IconButton, Badge } from "@mui/material";
 import { get } from 'services/apiService';
 import MKButton from "components/MKButton";
 import MKBox from "components/MKBox";
@@ -8,6 +8,9 @@ import bgImage from "assets/images/city-profile.jpg";
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import Pagination from '@mui/material/Pagination';
+import { useCart } from "contexts/CartContext";
+import { Link } from "react-router-dom";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -18,6 +21,7 @@ const Shop = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [viewMode, setViewMode] = useState(localStorage.getItem('shopViewMode') || 'grid');
+    const { addToCart } = useCart();
 
     useEffect(() => {
         fetchCategories();
@@ -218,13 +222,23 @@ const Shop = () => {
                                         <Grid container spacing={3} mb={2}>
                                             {products.map((product) => (
                                                 <Grid item xs={12} sm={viewMode === 'grid' ? 6 : 12} md={viewMode === 'grid' ? 4 : 12} key={product.id}>
-                                                    <Card>
+                                                    <Card sx={{ position: 'relative' }}>
                                                         <CardMedia
                                                             component="img"
                                                             height="140"
                                                             image={product.imageUrl}
                                                             alt={product.name}
                                                         />
+
+                                                        <IconButton
+                                                            color="primary"
+                                                            sx={{ position: 'absolute', top: 8, right: 8 }}
+                                                            onClick={() => addToCart(product)}
+                                                        >
+
+                                                            <AddShoppingCartIcon />
+                                                        </IconButton>
+
                                                         <CardContent>
                                                             <Typography gutterBottom variant="h5" component="div">
                                                                 {product.name}
@@ -235,6 +249,9 @@ const Shop = () => {
                                                             <Typography variant="h6" color="text.primary">
                                                                 ${product.price}
                                                             </Typography>
+                                                            <Button component={Link} to={`/product/${product.id}`} variant="outlined" color="secondary" sx={{ mt: 2 }}>
+                                                                View Details
+                                                            </Button>
                                                         </CardContent>
                                                     </Card>
                                                 </Grid>

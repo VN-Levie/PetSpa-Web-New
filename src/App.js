@@ -13,6 +13,11 @@ import DefaultFooter from "examples/Footers/DefaultFooter";
 import ServiceDetail from "pages/SpaServices/ServiceDetail";
 import CategoryDetail from "pages/SpaServices/CategoryDetail";
 import { BookingProvider } from "contexts/BookingContext";
+import CartDetail from "pages/CartDetail";
+import ProductDetail from "pages/ProductDetail";
+import { CartProvider } from "contexts/CartContext";
+import ProductCheckout from "pages/ProductCheckout";
+
 function AppRoutes() {
   const { user, loading } = useAuth();
   const routes = getRoutes(user);
@@ -37,7 +42,9 @@ function AppRoutes() {
       <Routes>
         {mapRoutes(routes)}
         <Route path="/cat/:catId/service/:serviceId" element={<ServiceDetail />} />
-
+        <Route path="/product/:productId" element={<ProductDetail />} />
+        <Route path="/cart" element={<CartDetail />} />
+        <Route path="/product-checkout" element={<ProductCheckout />} />
         <Route path="/" element={<Presentation />} />
         <Route path="*" element={<Navigate to="/" />} />
 
@@ -111,16 +118,18 @@ export default function App() {
 
 
     <BookingProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <CartProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
 
-        <AppNavbar />
-        <AppRoutes />
-        <TitleUpdater />
-        <MKBox pt={6} px={1} mt={6}>
-          <DefaultFooter content={footerRoutes} />
-        </MKBox>
-      </ThemeProvider>
+          <AppNavbar />
+          <AppRoutes />
+          <TitleUpdater />
+          <MKBox pt={6} px={1} mt={6}>
+            <DefaultFooter content={footerRoutes} />
+          </MKBox>
+        </ThemeProvider>
+      </CartProvider>
     </BookingProvider>
 
 
