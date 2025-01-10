@@ -9,6 +9,8 @@ import { get, post } from 'services/apiService';
 import Swal from "sweetalert2";
 const ProductCheckout = () => {
     const { cart, clearCart } = useCart();
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [useNewAddress, setUseNewAddress] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -150,6 +152,7 @@ const ProductCheckout = () => {
 
                 if (response.data.status === 200) {
                     setShippingFee(response.data.data.shippingFee);
+                    Swal.close();
                 } else if (response.data.status === 400 || response.data.status === 500) {
                     Swal.fire({
                         icon: 'error',
@@ -186,7 +189,9 @@ const ProductCheckout = () => {
                         title: 'Error.',
                         text: 'Something went wrong. Please try again later!',
                     });
+
                 } finally {
+
                     setStreetNumber("");
                     setStreet("");
                     setCity("");
@@ -199,9 +204,6 @@ const ProductCheckout = () => {
                 }
 
 
-
-            } finally {
-                Swal.close();
 
             }
         }
@@ -267,7 +269,24 @@ const ProductCheckout = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
                                 <MKBox mb={3}>
-                                    <Typography variant="h6">Delivery Address</Typography>
+                                    <Typography variant="h6">
+                                        Contact Information
+                                    </Typography>
+                                    <TextField
+                                        label="Full Name"
+                                        name="name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        label="Phone Number"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        fullWidth
+                                        margin="normal"
+                                    />
+                                    <Typography variant="h6">Delivery to</Typography>
                                     <FormControl component="fieldset" margin="normal">
                                         <RadioGroup
                                             value={useNewAddress ? "new" : "saved"}
@@ -303,19 +322,21 @@ const ProductCheckout = () => {
                                             <TextField
                                                 label="Street number"
                                                 value={streetNumber}
+                                                onChange={(e) => setStreetNumber(e.target.value)}
                                                 fullWidth
                                                 margin="normal"
                                                 InputProps={{
-                                                    readOnly: true,
+                                                    readOnly: false,
                                                 }}
                                             />
                                             <TextField
                                                 label="Street"
                                                 value={street}
+                                                onChange={(e) => setStreet(e.target.value)}
                                                 fullWidth
                                                 margin="normal"
                                                 InputProps={{
-                                                    readOnly: true,
+                                                    readOnly: false,
                                                 }}
                                             />
                                             <TextField
@@ -354,7 +375,7 @@ const ProductCheckout = () => {
                                                     readOnly: true,
                                                 }}
                                             />
-                                            <TextField
+                                            {/* <TextField
                                                 label="Latitude"
                                                 value={latitude || ""}
                                                 fullWidth
@@ -371,7 +392,7 @@ const ProductCheckout = () => {
                                                 InputProps={{
                                                     readOnly: true,
                                                 }}
-                                            />
+                                            /> */}
                                         </>
                                     ) : (
                                         <TextField
