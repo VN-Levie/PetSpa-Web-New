@@ -17,6 +17,7 @@ import ProductDetail from "pages/ProductDetail";
 import ProductCheckout from "pages/ProductCheckout";
 import { useCart } from "contexts/CartContext";
 import { useBooking } from "contexts/BookingContext";
+import ReviewAndConfirmOrder from "pages/ReviewAndConfirmOrder";
 export const getRoutes = (user) => {
   const { cart } = useCart();
   const countCartItems = cart.length;
@@ -81,6 +82,13 @@ export const getRoutes = (user) => {
       name: "Product Checkout",
       route: "/product-checkout",
       component: <ProductCheckout />,
+      hidden: true,
+    },
+    {
+      icon: <Icon>shopping_cart</Icon>,
+      name: "review-and-confirm-order",
+      route: "/review-and-confirm-order",
+      component: <ReviewAndConfirmOrder />,
       hidden: true,
     },
   ];

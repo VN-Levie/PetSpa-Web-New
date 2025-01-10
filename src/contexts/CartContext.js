@@ -23,6 +23,8 @@ export const CartProvider = ({ children }) => {
                     item.id === product.id ? { ...item, quantity: item.quantity + product.quantity } : item
                 );
             }
+            if (product.quantity === undefined) product.quantity = 1;
+            if (product.quantity < 1) product.quantity = 1;
             return [...prev, product];
         });
     };

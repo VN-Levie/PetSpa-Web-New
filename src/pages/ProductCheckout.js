@@ -7,16 +7,20 @@ import bgImage from "assets/images/bg-about-us.jpg";
 import MKTypography from "components/MKTypography";
 import { get, post } from 'services/apiService';
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
 const ProductCheckout = () => {
     const { cart, clearCart } = useCart();
-    const [name, setName] = useState("");
-    const [phone, setPhone] = useState("");
+    const [name, setName] = useState("Name");
+    const [phone, setPhone] = useState("0123456789");
     const [address, setAddress] = useState("");
     const [useNewAddress, setUseNewAddress] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [addressOptions, setAddressOptions] = useState([]);
     const [addressRs, setAddressRs] = useState([]);
     const [debounceTimeout, setDebounceTimeout] = useState(null);
+    const navigate = useNavigate();
+    const [addresses, setAddresses] = useState([]);
 
     // State cho các trường thứ cấp
     const [streetNumber, setStreetNumber] = useState("");
@@ -40,7 +44,72 @@ const ProductCheckout = () => {
         setSubtotal(total);
     }, [cart]);
 
+    useEffect(() => {
+        setAddress("");
+        setStreetNumber("");
+        setStreet("");
+        setCity("");
+        setProvince("");
+        setPostalCode("");
+        setCountry("");
+        setLatitude(null);
+        setLongitude(null);
+        setShippingFee(0);
+    }, [useNewAddress]);
+
+    const loadAddresses = async () => {
+        try {
+            const response = await get('/api/auth/bookaddress?page=0&size=10', {}, true);
+            if (response.data.status === 200) {
+                setAddresses(response.data.data || []);
+            } else {
+                console.error("Error loading addresses:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error loading addresses:", error);
+        }
+    };
+
+    useEffect(() => {
+        loadAddresses();
+    }, []);
+
     const handleConfirmOrder = async () => {
+        // Validate từng trường
+        if (!name) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter your name.',
+            });
+            return;
+        }
+        const phoneRegex = /^0[0-9]{9}$/;
+        if (!phone || !phoneRegex.test(phone)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a valid 10-digit phone number starting with 0.',
+            });
+            return;
+        }
+        if (!address) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter or select an address.',
+            });
+            return;
+        }
+        if (!paymentMethod) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please select a payment method.',
+            });
+            return;
+        }
+
         const orderDetails = {
             address,
             latitude,
@@ -49,22 +118,16 @@ const ProductCheckout = () => {
             cart,
             shippingFee,
             total: subtotal + shippingFee,
+            subtotal,
+            name,
+            phone,
         };
+        console.log("Order details:", orderDetails);
 
-        try {
-            // const response = await post("http://localhost:8090/api/order", orderDetails);
-            // if (response.data.status === 200) {
-            //     console.log("Order confirmed:", response.data);
-            //     clearCart();
-            // } else {
-            //     console.error("Error confirming order:", response.data.message);
-            // }
-        } catch (error) {
-            console.error("Error confirming order:", error);
-        }
+        navigate("/review-and-confirm-order", { state: { orderDetails } });
     };
 
-    const savedAddresses = ["123 Main St", "456 Elm St", "789 Oak St"]; // Example saved addresses
+
     const handleAddressSearch = async (query) => {
         try {
             const response = await get(`/api/map/search-place?query=${query}`);
@@ -209,6 +272,67 @@ const ProductCheckout = () => {
         }
     };
 
+    const handleAddressSelectFromSaved = async (selectedAddress) => {
+        setAddress(selectedAddress);
+        if (!selectedAddress) {
+            // Nếu không có địa chỉ nào được chọn, xóa các trường thứ cấp
+            setStreetNumber("");
+            setStreet("");
+            setCity("");
+            setProvince("");
+            setPostalCode("");
+            setCountry("");
+            setLatitude(null);
+            setLongitude(null);
+            setShippingFee(0);
+            return;
+        }
+        // Tìm thông tin chi tiết từ `addresses`
+        const selected = addresses.find((addr) => addr.freeformAddress === selectedAddress);
+
+        if (selected) {
+            setStreetNumber(selected.streetNumber || "");
+            setStreet(selected.street || "");
+            setCity(selected.city || "");
+            setProvince(selected.province || "");
+            setPostalCode(selected.postalCode || "");
+            setCountry(selected.country || "");
+            setLatitude(selected.latitude || null);
+            setLongitude(selected.longitude || null);
+
+            // Call API to calculate shipping fee
+            try {
+                Swal.showLoading();
+                const response = await get(`/api/map/calculate-shipping-fee?userLat=${selected.latitude}&userLon=${selected.longitude}`);
+                if (response.data.status === 200) {
+                    setShippingFee(response.data.data.shippingFee);
+                    Swal.close();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.data.message,
+                    });
+                }
+            } catch (error) {
+                console.error("Error calculating shipping fee:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again later.',
+                });
+                setStreetNumber("");
+                setStreet("");
+                setCity("");
+                setProvince("");
+                setPostalCode("");
+                setCountry("");
+                setLatitude(null);
+                setLongitude(null);
+                setShippingFee(0);
+            }
+        }
+    };
 
     return (
         <>
@@ -292,8 +416,8 @@ const ProductCheckout = () => {
                                             value={useNewAddress ? "new" : "saved"}
                                             onChange={(e) => setUseNewAddress(e.target.value === "new")}
                                         >
-                                            <FormControlLabel value="saved" control={<Radio />} label="Deliver to Saved Address" />
-                                            <FormControlLabel value="new" control={<Radio />} label="Deliver to New Address" />
+                                            <FormControlLabel value="saved" control={<Radio />} label="Saved Address" />
+                                            <FormControlLabel value="new" control={<Radio />} label="Enter new address" />
                                         </RadioGroup>
                                     </FormControl>
                                     {useNewAddress ? (
@@ -399,9 +523,8 @@ const ProductCheckout = () => {
                                             select
                                             label="Select Address"
                                             value={address}
-                                            onChange={(e) => setAddress(e.target.value)}
+                                            onChange={(e) => handleAddressSelectFromSaved(e.target.value)}
                                             fullWidth
-                                            displayEmpty
                                             margin="normal"
                                             sx={{
                                                 '.MuiInputBase-root': {
@@ -413,9 +536,9 @@ const ProductCheckout = () => {
                                                 },
                                             }}
                                         >
-                                            {savedAddresses.map((addr, index) => (
-                                                <MenuItem key={index} value={addr}>
-                                                    {addr}
+                                            {addresses.map((addr, index) => (
+                                                <MenuItem key={index} value={addr.freeformAddress}>
+                                                    {addr.freeformAddress}
                                                 </MenuItem>
                                             ))}
                                         </TextField>

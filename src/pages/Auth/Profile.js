@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { get } from 'services/apiService';
 import PetManager from "./sections/PetManager";
+import BookAddress from "./sections/BookAddress";
 
 function Author() {
 
@@ -177,6 +178,7 @@ function Author() {
                             </Grid>
                         </Container>
                         <PetManager profile={profile} petCount={petCount} onCountChange={handlePetCountChange} />
+                        <BookAddress profile={profile}/>
 
                     </MKBox>
 
