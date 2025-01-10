@@ -24,7 +24,7 @@ export const getRoutes = (user) => {
   const { bookingData } = useBooking();
   const countBookingItems = bookingData.selectedServices.length;
   console.log("countBookingItems", bookingData.selectedServices.length);
-  
+
   const baseRoutes = [
     // {
     //   name: "pages",
@@ -33,15 +33,7 @@ export const getRoutes = (user) => {
     //   component: <AboutUs />,
 
     // },
-    {
-      icon: <Icon>
-        shopping_cart
-      </Icon>,
-      name: "Sevice Checkout",
-      route: "/checkout",
-      component: <Checkout />,
-      count: countBookingItems,
-    },
+
     {
       icon: <Icon>hotel</Icon>,
       name: "Hotel Booking",
@@ -57,11 +49,21 @@ export const getRoutes = (user) => {
       component: <Service />,
     },
     {
+      icon: <Icon>
+        shopping_cart
+      </Icon>,
+      name: "Sevice Cart",
+      route: "/checkout",
+      component: <Checkout />,
+      count: countBookingItems,
+    },
+    {
       icon: <Icon>store</Icon>,
-      name: "Shop",
+      name: "Pet Shop",
       route: "/shop",
       component: <Shop />,
     },
+
     {
       icon: <Icon>shopping_cart</Icon>,
       name: "Cart",

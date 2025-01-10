@@ -87,7 +87,7 @@ function DefaultNavbarDropdown({
                   "75%": { transform: "translateX(-3px)" },
                   "100%": { transform: "translateX(0)" },
                 },
-                ml: 1.5, // Khoảng cách giữa tên và badge
+                ml: 2, // Khoảng cách giữa tên và badge
               }}
             />
           )}

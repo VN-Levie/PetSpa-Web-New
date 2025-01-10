@@ -28,7 +28,8 @@ function DefaultNavbarMobile({ routes, open }) {
   const handleSetCollapse = (name) => (collapse === name ? setCollapse(false) : setCollapse(name));
 
   const renderNavbarItems = routes.map(
-    ({ name, icon, collapse: routeCollapses, href, route, collapse: navCollapse, hidden }) => {
+    ({ name, icon, collapse: routeCollapses, href, route, collapse: navCollapse, hidden, count }) => {
+
       if (hidden) return null;
       return (
         <DefaultNavbarDropdown
@@ -39,6 +40,7 @@ function DefaultNavbarMobile({ routes, open }) {
           onClick={() => handleSetCollapse(name)}
           href={href}
           route={route}
+          count={count}
           collapse={Boolean(navCollapse)}
         >
           <MKBox sx={{ height: "15rem", maxHeight: "15rem", overflowY: "scroll" }}>
@@ -129,13 +131,14 @@ function DefaultNavbarMobile({ routes, open }) {
                         fontWeight="regular"
                         sx={{ transition: "all 300ms linear" }}
                       >
-                        {item.description}
+                        {item.description} - adsd
                       </MKTypography>
                     </MKBox>
                   )}
                 </MKBox>
               ))}
           </MKBox>
+
         </DefaultNavbarDropdown>
       )
     }
