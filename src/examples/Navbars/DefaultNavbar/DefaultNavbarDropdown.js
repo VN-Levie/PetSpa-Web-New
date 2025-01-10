@@ -1,14 +1,8 @@
-// prop-types is a library for typechecking of props
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// @mui material components
 import Collapse from "@mui/material/Collapse";
 import Icon from "@mui/material/Icon";
-
-//  components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import { Badge } from "@mui/material";
@@ -25,6 +19,16 @@ function DefaultNavbarDropdown({
   count,
   ...rest
 }) {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (count > 0) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 500); // Animation lasts 0.5s
+      return () => clearTimeout(timer);
+    }
+  }, [count]);
+
   const linkComponent = {
     component: "a",
     href,
@@ -44,7 +48,7 @@ function DefaultNavbarDropdown({
         mx={1}
         p={1}
         display="flex"
-        alignItems="baseline"
+        alignItems="center"
         color={light ? "white" : "dark"}
         opacity={light ? 1 : 0.6}
         sx={{ cursor: "pointer", userSelect: "none" }}
@@ -59,28 +63,35 @@ function DefaultNavbarDropdown({
         >
           {icon}
         </MKTypography>
-        <MKTypography
-          variant="button"
-          fontWeight="regular"
-          textTransform="capitalize"
-          color={light ? "white" : "dark"}
-          sx={{ fontWeight: "100%", ml: 1, mr: 0.25 }}
-        >
-          {name}
-          <Badge
-            badgeContent={count > 0 ? count : null}
-            color="error"
-            overlap="rectangular"
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            sx={{
-              // position: "absolute",
-              animation: count > 0 ? "badge-pulse 0.5s infinite alternate" : "none",
-            }}
-          />
-        </MKTypography>
+
+        <MKBox display="flex" alignItems="center" sx={{ ml: 1, mr: 0.25 }}>
+          <MKTypography
+            variant="button"
+            fontWeight="regular"
+            textTransform="capitalize"
+            color={light ? "white" : "dark"}
+            sx={{ fontWeight: "100%" }}
+          >
+            {name}
+          </MKTypography>
+          {count !== undefined && (
+            <Badge
+              badgeContent={count > 0 ? count : null}
+              color="error"
+              sx={{
+                animation: isAnimating ? "badge-shake 0.5s" : "none",
+                "@keyframes badge-shake": {
+                  "0%": { transform: "translateX(0)" },
+                  "25%": { transform: "translateX(-3px)" },
+                  "50%": { transform: "translateX(3px)" },
+                  "75%": { transform: "translateX(-3px)" },
+                  "100%": { transform: "translateX(0)" },
+                },
+                ml: 1.5, // Khoảng cách giữa tên và badge
+              }}
+            />
+          )}
+        </MKBox>
 
         <MKTypography variant="body2" color={light ? "white" : "dark"} ml="auto">
           <Icon sx={{ fontWeight: "normal", verticalAlign: "middle" }}>
@@ -104,6 +115,7 @@ DefaultNavbarDropdown.defaultProps = {
   light: false,
   href: "",
   route: "",
+  count: undefined, // Default là undefined nếu không truyền
 };
 
 // Typechecking props for the DefaultNavbarDropdown
@@ -116,6 +128,7 @@ DefaultNavbarDropdown.propTypes = {
   href: PropTypes.string,
   route: PropTypes.string,
   collapse: PropTypes.bool.isRequired,
+  count: PropTypes.number, // Không bắt buộc
 };
 
 export default DefaultNavbarDropdown;
