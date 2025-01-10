@@ -222,7 +222,9 @@ const Shop = () => {
                                         <Grid container spacing={3} mb={2}>
                                             {products.map((product) => (
                                                 <Grid item xs={12} sm={viewMode === 'grid' ? 6 : 12} md={viewMode === 'grid' ? 4 : 12} key={product.id}>
-                                                    <Card sx={{ position: 'relative' }}>
+                                                    <Card sx={{ position: 'relative', backgroundColor: '#f5f5f5' }}>
+                                                        {/* Bọc ảnh trong Link */}
+
                                                         <CardMedia
                                                             component="img"
                                                             height="140"
@@ -230,33 +232,61 @@ const Shop = () => {
                                                             alt={product.name}
                                                         />
 
+
+                                                        {/* Nút Add to Cart */}
                                                         <IconButton
                                                             color="primary"
-                                                            sx={{ position: 'absolute', top: 8, right: 8 }}
+                                                            size="small"
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                top: 18,
+                                                                right: 18,
+                                                                backgroundColor: '#f5f5f5',
+                                                                '&:hover': {
+                                                                    backgroundColor: '#FFD1DC',
+                                                                },
+                                                            }}
                                                             onClick={() => addToCart(product)}
                                                         >
-
                                                             <AddShoppingCartIcon />
                                                         </IconButton>
 
                                                         <CardContent>
-                                                            <Typography gutterBottom variant="h5" component="div">
-                                                                {product.name}
-                                                            </Typography>
+                                                            {/* Bọc tên trong Link */}
+                                                            <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                                <Typography gutterBottom variant="h5" component="div" sx={{ cursor: 'pointer' }}>
+                                                                    {product.name}
+                                                                </Typography>
+                                                            </Link>
+
                                                             <Typography variant="body2" color="text.secondary">
                                                                 {product.description}
                                                             </Typography>
-                                                            <Typography variant="h6" color="text.primary">
+
+                                                            <Typography variant="h6" color="primary">
                                                                 ${product.price}
                                                             </Typography>
-                                                            <Button component={Link} to={`/product/${product.id}`} variant="outlined" color="secondary" sx={{ mt: 2 }}>
+
+                                                            {/* Nút View Details */}
+
+                                                            <MKButton
+                                                                type="submit"
+                                                                variant="contained"
+                                                                color="primary"
+                                                                fullWidth
+                                                                component={Link} to={`/product/${product.id}`}
+                                                                sx={{ mt: 2 }}
+                                                            >
                                                                 View Details
-                                                            </Button>
+                                                            </MKButton>
+
+
                                                         </CardContent>
                                                     </Card>
                                                 </Grid>
                                             ))}
                                         </Grid>
+
                                     )}
                                     <MKBox display="flex" justifyContent="center" mt={4}>
                                         <Pagination count={totalPages} page={page} onChange={handlePageChange} />

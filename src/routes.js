@@ -23,8 +23,6 @@ export const getRoutes = (user) => {
 
   const { bookingData } = useBooking();
   const countBookingItems = bookingData.selectedServices.length;
-  console.log("countBookingItems", bookingData.selectedServices.length);
-
   const baseRoutes = [
     // {
     //   name: "pages",

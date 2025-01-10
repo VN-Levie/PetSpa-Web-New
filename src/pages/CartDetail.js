@@ -1,9 +1,23 @@
+import React from "react";
 import { useCart } from "contexts/CartContext";
-import { Container, Grid, Card, CardMedia, CardContent, Typography, Button, TextField } from "@mui/material";
+import {
+    Container,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    Button,
+    TextField,
+    Paper,
+} from "@mui/material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import { Link } from "react-router-dom";
 import bgImage from "assets/images/city-profile.jpg";
+import MKButton from "components/MKButton";
 
 const CartDetail = () => {
     const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -25,7 +39,7 @@ const CartDetail = () => {
                     placeItems: "center",
                 }}
             />
-            <Card
+            <Paper
                 sx={{
                     p: 2,
                     mx: { xs: 2, lg: 3 },
@@ -36,63 +50,76 @@ const CartDetail = () => {
                     boxShadow: ({ boxShadows: { xxl } }) => xxl,
                 }}
             >
+                <MKTypography variant="h3" align="center">
+                    Cart And Checkout
+                </MKTypography>
                 <MKBox component="section" py={{ xs: 6, sm: 12 }}>
                     <Container>
-                        <MKTypography variant="h4" mb={2}>Cart Details</MKTypography>
                         {cart.length === 0 ? (
-                            <MKTypography variant="body1">Your cart is empty.</MKTypography>
+                            <MKTypography align="center" variant="body1">Your cart is empty.</MKTypography>
                         ) : (
-                            <Grid container spacing={3}>
-                                {cart.map((product) => (
-                                    <Grid item xs={12} sm={6} md={4} key={product.id}>
-                                        <Card>
-                                            <CardMedia
-                                                component="img"
-                                                height="140"
-                                                image={product.imageUrl}
-                                                alt={product.name}
-                                            />
-                                            <CardContent>
-                                                <Typography gutterBottom variant="h5" component="div">
-                                                    {product.name}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {product.description}
-                                                </Typography>
-                                                <Typography variant="h6" color="text.primary">
-                                                    ${product.price}
-                                                </Typography>
-                                                <TextField
-                                                    label="Quantity"
-                                                    type="number"
-                                                    value={product.quantity}
-                                                    onChange={(e) => updateQuantity(product.id, parseInt(e.target.value))}
-                                                    inputProps={{ min: 1 }}
-                                                    fullWidth
-                                                    margin="normal"
-                                                />
-                                                <Button variant="contained" color="secondary" onClick={() => removeFromCart(product.id)}>
-                                                    Remove
-                                                </Button>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableBody>
+                                        {cart.map((product) => (
+                                            <TableRow key={product.id}>
+                                                <TableCell align="center">
+                                                    <img
+                                                        src={product.imageUrl}
+                                                        alt={product.name}
+                                                        style={{ width: "80px", height: "auto", borderRadius: "4px" }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">{product.name}</TableCell>
+                                                <TableCell align="center">${product.price}</TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        value={product.quantity || 1} // Đảm bảo giá trị mặc định
+                                                        onChange={(e) =>
+                                                            updateQuantity(product.id, Math.max(1, parseInt(e.target.value) || 1))
+                                                        }
+                                                        inputProps={{ min: 1 }}
+                                                        size="small"
+                                                        sx={{ width: "80px" }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    ${((product.price || 0) * (product.quantity || 1)).toFixed(2)}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <MKButton
+                                                        variant="outlined"
+                                                        color="secondary"
+                                                        onClick={() => removeFromCart(product.id)}
+                                                    >
+                                                        Remove
+                                                    </MKButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
                         )}
                         {cart.length > 0 && (
-                            <MKBox mt={4}>
-                                <Button variant="contained" color="primary" onClick={clearCart}>
+                            <MKBox mt={4} display="flex" justifyContent="space-between" alignItems="center">
+                                <MKButton variant="contained" color="primary" onClick={clearCart}>
                                     Clear Cart
-                                </Button>
-                                <Button component={Link} to="/product-checkout" variant="contained" color="success" sx={{ ml: 2 }}>
+                                </MKButton>
+                                <MKButton
+                                    component={Link}
+                                    to="/product-checkout"
+                                    variant="contained"
+                                    color="success"
+                                >
                                     Proceed to Checkout
-                                </Button>
+                                </MKButton>
                             </MKBox>
                         )}
                     </Container>
                 </MKBox>
-            </Card>
+            </Paper>
         </MKBox>
     );
 };
