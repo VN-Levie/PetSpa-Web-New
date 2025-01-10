@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Container, Grid, Typography, Card, TextField, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio, Autocomplete } from "@mui/material";
+import { Container, Grid, Typography, Card, TextField, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio, Autocomplete, TableCell, TableBody, TableRow, TableContainer, Paper, Table, TableHead } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
 import { useCart } from "contexts/CartContext";
 import bgImage from "assets/images/bg-about-us.jpg";
 import MKTypography from "components/MKTypography";
-import { get } from 'services/apiService';
-
+import { get, post } from 'services/apiService';
+import Swal from "sweetalert2";
 const ProductCheckout = () => {
     const { cart, clearCart } = useCart();
     const [address, setAddress] = useState("");
@@ -27,6 +27,8 @@ const ProductCheckout = () => {
     //tính đơn hàng
     const [shippingFee, setShippingFee] = useState(10); // Phí ship cố định
     const [subtotal, setSubtotal] = useState(0); // Tổng phụ
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
     // Tính tổng phụ dựa trên giỏ hàng
     useEffect(() => {
         const total = cart.reduce(
@@ -36,15 +38,34 @@ const ProductCheckout = () => {
         setSubtotal(total);
     }, [cart]);
 
-    const handleConfirmOrder = () => {
-        // Handle order confirmation logic here
-        clearCart();
+    const handleConfirmOrder = async () => {
+        const orderDetails = {
+            address,
+            latitude,
+            longitude,
+            paymentMethod,
+            cart,
+            shippingFee,
+            total: subtotal + shippingFee,
+        };
+
+        try {
+            // const response = await post("http://localhost:8090/api/order", orderDetails);
+            // if (response.data.status === 200) {
+            //     console.log("Order confirmed:", response.data);
+            //     clearCart();
+            // } else {
+            //     console.error("Error confirming order:", response.data.message);
+            // }
+        } catch (error) {
+            console.error("Error confirming order:", error);
+        }
     };
 
     const savedAddresses = ["123 Main St", "456 Elm St", "789 Oak St"]; // Example saved addresses
     const handleAddressSearch = async (query) => {
         try {
-            const response = await get(`http://localhost:8090/api/map/search-place?query=${query}`);
+            const response = await get(`/api/map/search-place?query=${query}`);
             if (response.data.status === 200) {
                 const jsonResponse = JSON.parse(response.data.data);
                 const results = jsonResponse.results;
@@ -83,7 +104,7 @@ const ProductCheckout = () => {
         debounceSearch(address);
     }, [address, debounceSearch]);
 
-    const handleAddressSelect = (selectedAddress) => {
+    const handleAddressSelect = async (selectedAddress) => {
         setAddress(selectedAddress);
         if (!selectedAddress) {
             // Nếu không có địa chỉ nào được chọn, xóa các trường thứ cấp
@@ -93,12 +114,20 @@ const ProductCheckout = () => {
             setProvince("");
             setPostalCode("");
             setCountry("");
+            setLatitude(null);
+            setLongitude(null);
+            setShippingFee(0);
             return;
         }
         // Tìm thông tin chi tiết từ `addressRs`
-        const selected = addressRs.find(
-            (result) => result.address.freeformAddress === selectedAddress
-        );
+        // Tìm thông tin chi tiết từ `addressRs`
+        const selected = addressRs.find((result) => {
+            const poiName = result.poi?.name ? `${result.poi.name} - ` : ""; // Lấy `poi.name` nếu có
+            const fullAddress = `${poiName}${result.address.freeformAddress}`; // Kết hợp `poi.name` và `freeformAddress`
+            return fullAddress === selectedAddress; // So sánh với địa chỉ đã chọn
+        });
+
+
 
         if (selected) {
             setStreetNumber(selected.address.streetNumber || "");
@@ -107,6 +136,74 @@ const ProductCheckout = () => {
             setProvince(selected.address.countrySubdivision || "");
             setPostalCode(selected.address.postalCode || "");
             setCountry(selected.address.country || "");
+            setLatitude(selected.position.lat || null);
+            setLongitude(selected.position.lon || null);
+
+            // Call API to calculate shipping fee
+            try {
+                Swal.showLoading();
+                console.log(selected.position.lat, selected.position.lon);
+                // console.log(`http://localhost:8090/api/map/calculate-shipping-fee?userLat=${selected.position.lat}&userLon=${selected.position.lon}`);
+
+                const response = await get(`/api/map/calculate-shipping-fee?userLat=${selected.position.lat}&userLon=${selected.position.lon}`);
+                // console.log("response", response.data);
+
+                if (response.data.status === 200) {
+                    setShippingFee(response.data.data.shippingFee);
+                } else if (response.data.status === 400 || response.data.status === 500) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.data.message,
+                    });
+                } else {
+                    console.error("Error calculating shipping fee:", response.data.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error~!',
+                        text: 'Something went wrong. Please try again later.',
+                    });
+                }
+            } catch (error) {
+                console.error("Error calculating shipping fee:", error);
+                try {
+                    if (error.response?.data?.message != null) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.response.data.message,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again later.',
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error.',
+                        text: 'Something went wrong. Please try again later!',
+                    });
+                } finally {
+                    setStreetNumber("");
+                    setStreet("");
+                    setCity("");
+                    setProvince("");
+                    setPostalCode("");
+                    setCountry("");
+                    setLatitude(null);
+                    setLongitude(null);
+                    setShippingFee(0);
+                }
+
+
+
+            } finally {
+                Swal.close();
+
+            }
         }
     };
 
@@ -114,7 +211,7 @@ const ProductCheckout = () => {
     return (
         <>
             <MKBox
-                minHeight="75vh"
+                minHeight="45vh"
                 width="100%"
                 sx={{
                     backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
@@ -160,8 +257,8 @@ const ProductCheckout = () => {
                 sx={{
                     p: 2,
                     mx: { xs: 2, lg: 3 },
-                    mt: -8,
-                    mb: 4,
+                    mt: -6,
+                    mb: 1,
                     boxShadow: ({ boxShadows: { xxl } }) => xxl,
                 }}
             >
@@ -169,30 +266,17 @@ const ProductCheckout = () => {
                     <MKBox py={6}>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
-                                {cart.length > 0 ? (
-                                    cart.map((product, index) => (
-                                        <MKBox key={index} mb={2}>
-                                            <Typography variant="h6">{product.name}</Typography>
-                                            <Typography variant="body1">Price: ${product.price}</Typography>
-                                            <Typography variant="body1">Quantity: {product.quantity}</Typography>
-                                        </MKBox>
-                                    ))
-                                ) : (
-                                    <Typography variant="body1">No products in cart.</Typography>
-                                )}
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <FormControl component="fieldset" margin="normal">
+                                <MKBox mb={3}>
                                     <Typography variant="h6">Delivery Address</Typography>
-                                    <RadioGroup
-                                        value={useNewAddress ? "new" : "saved"}
-                                        onChange={(e) => setUseNewAddress(e.target.value === "new")}
-                                    >
-                                        <FormControlLabel value="saved" control={<Radio />} label="Deliver to Saved Address" />
-                                        <FormControlLabel value="new" control={<Radio />} label="Deliver to New Address" />
-                                    </RadioGroup>
-                                </FormControl>
-                                <FormControl fullWidth>
+                                    <FormControl component="fieldset" margin="normal">
+                                        <RadioGroup
+                                            value={useNewAddress ? "new" : "saved"}
+                                            onChange={(e) => setUseNewAddress(e.target.value === "new")}
+                                        >
+                                            <FormControlLabel value="saved" control={<Radio />} label="Deliver to Saved Address" />
+                                            <FormControlLabel value="new" control={<Radio />} label="Deliver to New Address" />
+                                        </RadioGroup>
+                                    </FormControl>
                                     {useNewAddress ? (
                                         <>
                                             <Autocomplete
@@ -270,8 +354,25 @@ const ProductCheckout = () => {
                                                     readOnly: true,
                                                 }}
                                             />
+                                            <TextField
+                                                label="Latitude"
+                                                value={latitude || ""}
+                                                fullWidth
+                                                margin="normal"
+                                                InputProps={{
+                                                    readOnly: true,
+                                                }}
+                                            />
+                                            <TextField
+                                                label="Longitude"
+                                                value={longitude || ""}
+                                                fullWidth
+                                                margin="normal"
+                                                InputProps={{
+                                                    readOnly: true,
+                                                }}
+                                            />
                                         </>
-
                                     ) : (
                                         <TextField
                                             select
@@ -298,19 +399,41 @@ const ProductCheckout = () => {
                                             ))}
                                         </TextField>
                                     )}
-                                </FormControl>
-                                <FormControl component="fieldset" margin="normal">
+                                </MKBox>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+
+                                <MKBox mb={3}>
+                                    <Typography variant="h6">Order Summary</Typography>
+                                    <MKBox mt={2} component={Paper} p={2}>
+                                        {/* Tổng phụ */}
+                                        <Typography variant="body1" align="right" sx={{ fontWeight: "bold" }}>
+                                            Subtotal: ${subtotal.toFixed(2)}
+                                        </Typography>
+                                        {/* Phí ship */}
+                                        <Typography variant="body1" align="right" sx={{ fontWeight: "bold" }}>
+                                            Shipping Fee: ${(shippingFee ?? 0).toFixed(2)}
+                                        </Typography>
+                                        {/* Tổng cộng */}
+                                        <Typography variant="h6" align="right" sx={{ fontWeight: "bold", mt: 2 }}>
+                                            Total: ${(subtotal + (shippingFee ?? 0)).toFixed(2)}
+                                        </Typography>
+                                    </MKBox>
+                                </MKBox>
+                                <MKBox mb={3}>
                                     <Typography variant="h6">Payment Method</Typography>
-                                    <RadioGroup
-                                        value={paymentMethod}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                    >
-                                        <FormControlLabel value="cod" control={<Radio />} label="Cash on Delivery (COD)" />
-                                        <FormControlLabel value="vnpay" control={<Radio />} label="VnPay" />
-                                    </RadioGroup>
-                                </FormControl>
+                                    <FormControl component="fieldset" margin="normal">
+                                        <RadioGroup
+                                            value={paymentMethod}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                        >
+                                            <FormControlLabel value="cod" control={<Radio />} label="Cash on Delivery (COD)" />
+                                            <FormControlLabel value="vnpay" control={<Radio />} label="VnPay" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </MKBox>
                                 <MKButton variant="gradient" color="success" fullWidth onClick={handleConfirmOrder}>
-                                    Confirm Order
+                                    Review and Confirm Order
                                 </MKButton>
                             </Grid>
                         </Grid>
