@@ -33,18 +33,23 @@ const ReviewAndConfirmOrder = () => {
             //     console.error("Error confirming order:", response.data.message);
             // }
             const formData2 = new FormData();
-            formData.append("id", -1);
-            formData.append("amount", 330);
-            formData.append("bankCode", "");
-            formData.append("language", "vn");
-            formData.append("detail", "");
-            formData.append("ip", "171.243.48.50");
+            const addressBookDTO = {
+                id: -1,
+                amount: orderDetails.total * 23000,
+                bankCode: "",
+                language: "vn",
+                detail: "detail",
+                ip: "171.243.48.50",
+            };
 
+            formData2.append("paymentDTO", JSON.stringify(addressBookDTO));
             const response = await post("/api/payment/create-payment", formData2, true);
             if (response.data.status === 200) {
-                console.log("Order confirmed:", response.data);
+                console.log("Payment gate url:", response.data.data);
                 // clearCart();
-                //history.push("/order-success");
+                // window.location.href = response.data.data; // This will navigate to the URL
+                window.open(response.data.data, "_blank");
+             
             } else {
                 console.error("Error confirming order:", response.data.message);
             }

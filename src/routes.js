@@ -18,6 +18,7 @@ import ProductCheckout from "pages/ProductCheckout";
 import { useCart } from "contexts/CartContext";
 import { useBooking } from "contexts/BookingContext";
 import ReviewAndConfirmOrder from "pages/ReviewAndConfirmOrder";
+import Dashboard from "pages/Dashboard";
 export const getRoutes = (user) => {
   const { cart } = useCart();
   const countCartItems = cart.length;
@@ -97,6 +98,7 @@ export const getRoutes = (user) => {
     ? [
       { name: "sign out", route: "/auth/sign-out", component: <SignOut /> },
       { name: "profile", route: "/auth/profile", component: <Profile /> },
+      { name: "dashboard", route: "/auth/dashboard", component: <Dashboard /> },
     ]
     : [
       { name: "sign in", route: "/auth/sign-in", component: <SignIn /> },

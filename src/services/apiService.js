@@ -117,7 +117,7 @@ export const post = async (endpoint, data, needJwt = false) => {
     if (needJwt) {
         const token = localStorage.getItem('token');
         if (token) {
-            config.headers = { 'Authorization': `Bearer ${token}` };
+            config.headers = { 'Authorization': `Bearer ${token}`};
         }
     }
     return apiClient.post(endpoint, data, config);
