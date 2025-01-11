@@ -23,12 +23,28 @@ const ReviewAndConfirmOrder = () => {
             console.log("Order confirmed:", orderDetails);
             const formData = new FormData();
             formData.append("orderRequestDTO", JSON.stringify(orderDetails));
-            
-            const response = await post("/api/user-order/createOrder", formData, true);
+
+            // const response = await post("/api/user-order/createOrder", formData, true);
+            // if (response.data.status === 200) {
+            //     console.log("Order confirmed:", response.data);
+            //     // clearCart();
+            //     history.push("/order-success");
+            // } else {
+            //     console.error("Error confirming order:", response.data.message);
+            // }
+            const formData2 = new FormData();
+            formData.append("id", -1);
+            formData.append("amount", 330);
+            formData.append("bankCode", "");
+            formData.append("language", "vn");
+            formData.append("detail", "");
+            formData.append("ip", "171.243.48.50");
+
+            const response = await post("/api/payment/create-payment", formData2, true);
             if (response.data.status === 200) {
                 console.log("Order confirmed:", response.data);
                 // clearCart();
-                history.push("/order-success");
+                //history.push("/order-success");
             } else {
                 console.error("Error confirming order:", response.data.message);
             }
