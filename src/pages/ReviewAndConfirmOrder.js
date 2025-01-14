@@ -7,54 +7,81 @@ import { useLocation } from "react-router-dom";
 import bgImage from "assets/images/bg-about-us.jpg";
 import MKTypography from "components/MKTypography";
 import { post } from "services/apiService";
-
+import { useAuth, user, loading as userLoading } from "contexts/AuthContext";
+import Swal from "sweetalert2";
 const ReviewAndConfirmOrder = () => {
     const { cart, clearCart } = useCart();
     const location = useLocation();
-
+    const { user, loading } = useAuth();
     const { orderDetails } = location.state;
 
     const handleConfirmPayment = async () => {
         try {
+            console.log("user", user);
+
             //in hoa toàn bộ paymentMethod
             orderDetails.paymentMethod = orderDetails.paymentMethod.toUpperCase();
             // "goodsType": "SHOP"
             orderDetails.goodsType = "SHOP";
             console.log("Order confirmed:", orderDetails);
             const formData = new FormData();
+            orderDetails.id = null;
+            orderDetails.userId = user.id;
             formData.append("orderRequestDTO", JSON.stringify(orderDetails));
 
-            // const response = await post("/api/user-order/createOrder", formData, true);
-            // if (response.data.status === 200) {
-            //     console.log("Order confirmed:", response.data);
-            //     // clearCart();
-            //     history.push("/order-success");
-            // } else {
-            //     console.error("Error confirming order:", response.data.message);
-            // }
-            const formData2 = new FormData();
-            const addressBookDTO = {
-                id: -1,
-                amount: orderDetails.total * 23000,
-                bankCode: "",
-                language: "vn",
-                detail: "detail",
-                ip: "171.243.48.50",
-            };
-
-            formData2.append("paymentDTO", JSON.stringify(addressBookDTO));
-            const response = await post("/api/payment/create-payment", formData2, true);
+            const response = await post("/api/user-order/createOrder", formData, true);
             if (response.data.status === 200) {
-                console.log("Payment gate url:", response.data.data);
+                console.log("Order confirmed:", response.data);
                 // clearCart();
-                // window.location.href = response.data.data; // This will navigate to the URL
-                window.open(response.data.data, "_blank");
-             
+                // history.push("/order-success");
             } else {
                 console.error("Error confirming order:", response.data.message);
             }
+            // const formData2 = new FormData();
+            // const addressBookDTO = {
+            //     id: -1,
+            //     amount: orderDetails.total * 23000,
+            //     bankCode: "",
+            //     language: "vn",
+            //     detail: "detail",
+            //     ip: "171.243.48.50",
+            // };
+
+            // formData2.append("paymentDTO", JSON.stringify(addressBookDTO));
+            // const response = await post("/api/payment/create-payment", formData2, true);
+            // if (response.data.status === 200) {
+            //     console.log("Payment gate url:", response.data.data);
+            //     // clearCart();
+            //     // window.location.href = response.data.data; // This will navigate to the URL
+            //     window.open(response.data.data, "_blank");
+
+            // } else {
+            //     console.error("Error confirming order:", response.data.message);
+            // }
         } catch (error) {
             console.error("Error confirming order:", error);
+            try {
+                if (error.response?.data?.message != null) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.response.data.message,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong. Please try again later.',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error.',
+                    text: 'Something went wrong. Please try again later!',
+                });
+
+            }
         }
     };
 

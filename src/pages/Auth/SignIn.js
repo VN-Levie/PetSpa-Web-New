@@ -55,6 +55,7 @@ function MySignIn() {
 
 
             if (response.ok) {
+                console.log("Login successful:", data.data);
                 login(data.data); // Cập nhật trạng thái đăng nhập
 
                 Swal.fire("Success", "Login successful", "success");

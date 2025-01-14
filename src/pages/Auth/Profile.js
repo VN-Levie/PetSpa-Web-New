@@ -41,7 +41,8 @@ function Author() {
                     const profileResponse = await get('/api/auth/profile', {}, true);
                     if (profileResponse.data.status === 200) {
                         setProfile(profileResponse.data.data);
-
+                        console.log("Profile:", profileResponse.data.data);
+                        
                         const petCountResponse = await get('/api/user-pet/count', {}, true);
                         if (petCountResponse.data.status === 200) {
                             setPetCount(petCountResponse.data.data);
