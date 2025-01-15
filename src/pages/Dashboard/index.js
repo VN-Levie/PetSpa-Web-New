@@ -51,10 +51,7 @@ function Dashboard() {
     const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [petCount, setPetCount] = useState(0);
-    const { register, handleSubmit, reset } = useForm();
-    const handlePetCountChange = (newCount) => {
-        setPetCount(newCount);
-    };
+
 
     const [products, setProducts] = useState([]);
     const [page, setPage] = useState(0);
@@ -68,145 +65,11 @@ function Dashboard() {
         const savedTab = localStorage.getItem('activeTab');
         return savedTab !== null ? parseInt(savedTab, 10) : 0;
     });
-    const [activeTabSpa, setActiveTabSpa] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabSpa');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabShop, setActiveTabShop] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabShop');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabHotel, setActiveTabHotel] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabHotel');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabPetTag, setActiveTabPetTag] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabPetTag');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabFeedback, setActiveTabFeedback] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabFeedback');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabUsers, setActiveTabUsers] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabUsers');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
-    const [activeTabAppSettings, setActiveTabAppSettings] = useState(() => {
-        const savedTab = localStorage.getItem('activeTabAppSettings');
-        return savedTab !== null ? parseInt(savedTab, 10) : 0;
-    });
 
     const handleTabType = (event, newValue) => {
         setActiveTab(newValue);
         localStorage.setItem('activeTab', newValue);
     };
-
-    const handleTabTypeSpa = (event, newValue) => {
-        setActiveTabSpa(newValue);
-        localStorage.setItem('activeTabSpa', newValue);
-    };
-
-    const handleTabTypeShop = (event, newValue) => {
-        setActiveTabShop(newValue);
-        localStorage.setItem('activeTabShop', newValue);
-    };
-
-    const handleTabTypeHotel = (event, newValue) => {
-        setActiveTabHotel(newValue);
-        localStorage.setItem('activeTabHotel', newValue);
-    };
-
-    const handleTabTypePetTag = (event, newValue) => {
-        setActiveTabPetTag(newValue);
-        localStorage.setItem('activeTabPetTag', newValue);
-    };
-
-    const handleTabTypeFeedback = (event, newValue) => {
-        setActiveTabFeedback(newValue);
-        localStorage.setItem('activeTabFeedback', newValue);
-    };
-
-    const handleTabTypeUsers = (event, newValue) => {
-        setActiveTabUsers(newValue);
-        localStorage.setItem('activeTabUsers', newValue);
-    };
-
-    const handleTabTypeAppSettings = (event, newValue) => {
-        setActiveTabAppSettings(newValue);
-        localStorage.setItem('activeTabAppSettings', newValue);
-    };
-
-    const fetchProducts = async (page) => {
-        try {
-            const response = await get(`/api/admin/spa-product/list?page=${page}&size=2`, {}, true);
-            if (response.data.status === 200) {
-                setProducts(response.data.data);
-                setTotalPages(response.data.totalPages);
-            }
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        }
-    };
-
-    const fetchCategories = async () => {
-        try {
-            const response = await get('/api/admin/spa-product/categories', {}, true);
-            if (response.data.status === 200) {
-                setCategories(response.data.data);
-            }
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    };
-
-    const fetchShopCategories = async () => {
-        try {
-            const response = await get('/api/admin/shop-product/categories', {}, true);
-            if (response.data.status === 200) {
-                setShopCategories(response.data.data);
-            }
-        } catch (error) {
-            console.error("Error fetching shop categories:", error);
-        }
-    };
-
-    const fetchShopProducts = async (page) => {
-        try {
-            const response = await get(`/api/admin/shop-product/list?page=${page}&size=2`, {}, true);
-            if (response.data.status === 200) {
-                setShopProducts(response.data.data);
-                setShopTotalPages(response.data.totalPages);
-            }
-        } catch (error) {
-            console.error("Error fetching shop products:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchProducts(page);
-    }, [page]);
-
-    useEffect(() => {
-        fetchCategories();
-    }, []);
-
-    useEffect(() => {
-        fetchShopCategories();
-    }, []);
-
-    useEffect(() => {
-        fetchShopProducts(shopPage);
-    }, [shopPage]);
-
-    const handlePageChange = (event, value) => {
-        setPage(value - 1);
-    };
-
-    const handleShopPageChange = (event, value) => {
-        setShopPage(value - 1);
-    };
-
     useEffect(() => {
         if (!loading && !user) {
             navigate("/auth/sign-in");
