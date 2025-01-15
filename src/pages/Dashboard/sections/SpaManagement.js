@@ -37,7 +37,7 @@ function SpaManagement() {
 
     const fetchProducts = async (page) => {
         try {
-            const response = await get(`/api/admin/spa-product/list?page=${page}&size=2`, {}, true);
+            const response = await get(`/api/admin/spa-product/list?page=${page}&size=10`, {}, true);
             if (response.data.status === 200) {
                 setProducts(response.data.data);
                 setTotalPages(response.data.totalPages);

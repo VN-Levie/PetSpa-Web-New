@@ -315,7 +315,7 @@ const BookAddress = ({ profile, addrCount, onCountChange }) => {
     };
 
     return (
-        <Card sx={{ p: 2, mx: { xs: 2, lg: 3 }, mt: -6, mb: 1, boxShadow: ({ boxShadows: { xxl } }) => xxl }}>
+        <Card sx={{ p: 2, mx: { xs: 2, lg: 3 }, mt: 2, mb: 1, boxShadow: ({ boxShadows: { xxl } }) => xxl }}>
             <Container>
                 <MKBox py={6}>
                     <Grid container spacing={3}>

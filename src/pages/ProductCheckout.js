@@ -417,7 +417,7 @@ const ProductCheckout = () => {
                                             onChange={(e) => setUseNewAddress(e.target.value === "new")}
                                         >
                                             <FormControlLabel value="saved" control={<Radio />} label="Saved Address" />
-                                            <FormControlLabel value="new" control={<Radio />} label="Enter new address" />
+                                            {/* <FormControlLabel value="new" control={<Radio />} label="Enter new address" /> */}
                                         </RadioGroup>
                                     </FormControl>
                                     {useNewAddress ? (

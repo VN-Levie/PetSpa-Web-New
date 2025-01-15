@@ -11,6 +11,7 @@ import Pagination from '@mui/material/Pagination';
 import { useCart } from "contexts/CartContext";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { API_ENDPOINT } from "configs/AppConfig";
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -37,6 +38,17 @@ const Shop = () => {
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
+    };
+
+    const fetchProductImage = (product) => {
+        // Xử lý URL
+        let formattedUrl = product.imageUrl;
+        if (!formattedUrl.startsWith('http')) {
+            formattedUrl = `${API_ENDPOINT}${formattedUrl}`;
+        } else if (formattedUrl.startsWith('http://localhost:')) {
+            formattedUrl = formattedUrl.replace(/^http:\/\/localhost:\d+/, API_ENDPOINT);
+        }
+        return formattedUrl;
     };
 
     const fetchProducts = async (params = searchParams) => {
@@ -227,10 +239,15 @@ const Shop = () => {
 
                                                         <CardMedia
                                                             component="img"
-                                                            height="140"
-                                                            image={product.imageUrl}
+                                                            sx={{
+                                                                height: 140, // Chiều cao cố định
+                                                                objectFit: "contain", // Đảm bảo ảnh vừa với khung mà không bị cắt
+                                                                backgroundColor: "#f5f5f5", // Tùy chỉnh màu nền cho khoảng trống (nếu có)
+                                                            }}
+                                                            image={fetchProductImage(product)}
                                                             alt={product.name}
                                                         />
+
 
 
                                                         {/* Nút Add to Cart */}
@@ -259,9 +276,9 @@ const Shop = () => {
                                                                 </Typography>
                                                             </Link>
 
-                                                            <Typography variant="body2" color="text.secondary">
+                                                            {/* <Typography variant="body2" color="text.secondary">
                                                                 {product.description}
-                                                            </Typography>
+                                                            </Typography> */}
 
                                                             <Typography variant="h6" color="primary">
                                                                 ${product.price}

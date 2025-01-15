@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, Skeleton, TextField } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Pagination, Select, Skeleton, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useForm } from "react-hook-form";
 
@@ -29,7 +29,7 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
     const [currentImage, setCurrentImage] = useState(null);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 3;
+    const pageSize = 4;
     const [searchParams, setSearchParams] = useState({ name: "", petTypeId: "" });
     const [petsLoading, setPetsLoading] = useState(false);
     const { register, handleSubmit, reset } = useForm();
@@ -86,6 +86,8 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
                 }));
                 setPets(petsWithImages);
                 setTotalPages(response.data.totalPages);
+                console.log("totalPages:", response.data.totalPages);
+
             }
         } catch (error) {
             console.error("Error fetching pets:", error);
@@ -285,7 +287,7 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
 
     return (
         <>
-            <Container>
+            <Container sx={{ mb: 1 }}>
                 <MKTypography variant="h4" mb={2}>Manage Pets</MKTypography>
                 <form onSubmit={handleSearchSubmit}>
                     <Grid container spacing={2} mb={2}>
@@ -336,43 +338,47 @@ const PetManager = ({ profile, petCount, onCountChange }) => {
                         <CircularProgress />
                     </MKBox>
                 ) : (
-                    <Grid container spacing={3} mt={2}>
-                        {pets.map((pet) => (
+                    <>
+                        <Grid container spacing={3} mt={2}>
+                            {pets.map((pet) => (
 
 
-                            <Grid item xs={12} sm={12} lg={6} key={pet.id}>
-                                <HorizontalTeamCardWithActions
-                                    image={pet.image || <Skeleton variant="rectangular" width={210} height={118} />}
-                                    name={pet.name}
-                                    position={{ color: "info", label: `Height: ${pet.height} cm, Weight: ${pet.weight} kg` }}
-                                    description={pet.description}
-                                    onEdit={() => handleEditPet(pet)}
-                                    onDelete={() => handleDeletePet(pet.id)}
-                                />
+                                <Grid item xs={12} sm={12} lg={6} key={pet.id}>
+                                    <HorizontalTeamCardWithActions
+                                        image={pet.image || <Skeleton variant="rectangular" width={210} height={118} />}
+                                        name={pet.name}
+                                        position={{ color: "info", label: `Height: ${pet.height} cm, Weight: ${pet.weight} kg` }}
+                                        description={pet.description}
+                                        onEdit={() => handleEditPet(pet)}
+                                        onDelete={() => handleDeletePet(pet.id)}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>                      
+                        <MKBox display="flex" justifyContent="space-between" mt={2}>
+                            <Grid container item justifyContent="center" xs={12} lg={6} mx="auto" height="100%">
+                                <MKPagination>
+                                    <MKPagination item onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
+                                        <Icon>keyboard_arrow_left</Icon>
+                                    </MKPagination>
+                                    {[...Array(totalPages)].map((_, index) => (
+                                        <MKPagination item key={index} active={index === page} onClick={() => handlePageChange(index)}>
+                                            {index + 1}
+                                        </MKPagination>
+                                    ))}
+                                    <MKPagination item onClick={() => handlePageChange(page + 1)} disabled={page >= totalPages - 1}>
+                                        <Icon>keyboard_arrow_right</Icon>
+                                    </MKPagination>
+                                </MKPagination>
                             </Grid>
-                        ))}
-                    </Grid>
+                        </MKBox>
+                    </>
+
                 )}
 
 
 
-                <MKBox display="flex" justifyContent="space-between" mt={2}>
-                    <Grid container item justifyContent="center" xs={12} lg={6} mx="auto" height="100%">
-                        <MKPagination>
-                            <MKPagination item onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
-                                <Icon>keyboard_arrow_left</Icon>
-                            </MKPagination>
-                            {[...Array(totalPages)].map((_, index) => (
-                                <MKPagination item key={index} active={index === page} onClick={() => handlePageChange(index)}>
-                                    {index + 1}
-                                </MKPagination>
-                            ))}
-                            <MKPagination item onClick={() => handlePageChange(page + 1)} disabled={page >= totalPages - 1}>
-                                <Icon>keyboard_arrow_right</Icon>
-                            </MKPagination>
-                        </MKPagination>
-                    </Grid>
-                </MKBox>
+
             </Container>
             <Dialog open={openDialog} onClose={handleDialogClose} sx={{ zIndex: 999 }}>
                 <DialogTitle>{currentPet ? "Edit Pet" : "Add Pet"}</DialogTitle>

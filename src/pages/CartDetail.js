@@ -18,10 +18,20 @@ import MKTypography from "components/MKTypography";
 import { Link } from "react-router-dom";
 import bgImage from "assets/images/city-profile.jpg";
 import MKButton from "components/MKButton";
+import { API_ENDPOINT } from "configs/AppConfig";
 
 const CartDetail = () => {
     const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
-
+    const fetchProductImage = (product) => {
+        // Xử lý URL
+        let formattedUrl = product.imageUrl;
+        if (!formattedUrl.startsWith('http')) {
+            formattedUrl = `${API_ENDPOINT}${formattedUrl}`;
+        } else if (formattedUrl.startsWith('http://localhost:')) {
+            formattedUrl = formattedUrl.replace(/^http:\/\/localhost:\d+/, API_ENDPOINT);
+        }
+        return formattedUrl;
+    };
     return (
         <MKBox bgColor="white">
             <MKBox
@@ -65,7 +75,7 @@ const CartDetail = () => {
                                             <TableRow key={product.id}>
                                                 <TableCell align="center">
                                                     <img
-                                                        src={product.imageUrl}
+                                                        src={fetchProductImage(product)}
                                                         alt={product.name}
                                                         style={{ width: "80px", height: "auto", borderRadius: "4px" }}
                                                     />

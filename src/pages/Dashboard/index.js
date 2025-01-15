@@ -144,7 +144,7 @@ function Dashboard() {
             <MKBox bgColor="white">
 
                 <MKBox
-                    minHeight="25rem"
+                    minHeight="18rem"
                     width="100%"
                     sx={{
                         backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
@@ -172,7 +172,7 @@ function Dashboard() {
 
                     <Container>
                         <Grid container spacing={1} >
-                            <Grid item xs={12} lg={3} mt={1} >
+                            <Grid item xs={12} lg={2} mt={1} >
                                 <AppBar position="static">
                                     <Tabs
                                         orientation="vertical"
@@ -202,7 +202,7 @@ function Dashboard() {
                                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                                     }}
                                 >
-                                    <Suspense fallback={<CircularProgress size={24} style={{ margin: "auto", display: "block" }} />}>
+                                    <Suspense fallback={<CircularProgress />}>
                                         {activeTab === 0 && <SpaManagement />}
                                         {activeTab === 1 && <ShopManagement />}
                                         {activeTab === 2 && <HotelManagement />}
