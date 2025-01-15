@@ -131,7 +131,7 @@ const Shop = () => {
                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                     }}
                 >
-                    <MKTypography variant="h3" align="center">Shop</MKTypography>
+                    <MKTypography variant="h3" align="center">Pet Shop</MKTypography>
                     <MKBox component="section" py={{ xs: 6, sm: 12 }}>
 
                         <Container>

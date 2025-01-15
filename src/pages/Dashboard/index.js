@@ -18,6 +18,9 @@ import {
     Paper,
     Pagination,
     CardContent,
+    AppBar,
+    Tabs,
+    Tab,
 } from "@mui/material";
 
 
@@ -54,6 +57,78 @@ function Dashboard() {
     const [shopProducts, setShopProducts] = useState([]);
     const [shopPage, setShopPage] = useState(0);
     const [shopTotalPages, setShopTotalPages] = useState(0);
+    const [activeTab, setActiveTab] = useState(() => {
+        const savedTab = localStorage.getItem('activeTab');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabSpa, setActiveTabSpa] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabSpa');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabShop, setActiveTabShop] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabShop');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabHotel, setActiveTabHotel] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabHotel');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabPetTag, setActiveTabPetTag] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabPetTag');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabFeedback, setActiveTabFeedback] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabFeedback');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabUsers, setActiveTabUsers] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabUsers');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+    const [activeTabAppSettings, setActiveTabAppSettings] = useState(() => {
+        const savedTab = localStorage.getItem('activeTabAppSettings');
+        return savedTab !== null ? parseInt(savedTab, 10) : 0;
+    });
+
+    const handleTabType = (event, newValue) => {
+        setActiveTab(newValue);
+        localStorage.setItem('activeTab', newValue);
+    };
+
+    const handleTabTypeSpa = (event, newValue) => {
+        setActiveTabSpa(newValue);
+        localStorage.setItem('activeTabSpa', newValue);
+    };
+
+    const handleTabTypeShop = (event, newValue) => {
+        setActiveTabShop(newValue);
+        localStorage.setItem('activeTabShop', newValue);
+    };
+
+    const handleTabTypeHotel = (event, newValue) => {
+        setActiveTabHotel(newValue);
+        localStorage.setItem('activeTabHotel', newValue);
+    };
+
+    const handleTabTypePetTag = (event, newValue) => {
+        setActiveTabPetTag(newValue);
+        localStorage.setItem('activeTabPetTag', newValue);
+    };
+
+    const handleTabTypeFeedback = (event, newValue) => {
+        setActiveTabFeedback(newValue);
+        localStorage.setItem('activeTabFeedback', newValue);
+    };
+
+    const handleTabTypeUsers = (event, newValue) => {
+        setActiveTabUsers(newValue);
+        localStorage.setItem('activeTabUsers', newValue);
+    };
+
+    const handleTabTypeAppSettings = (event, newValue) => {
+        setActiveTabAppSettings(newValue);
+        localStorage.setItem('activeTabAppSettings', newValue);
+    };
 
     const fetchProducts = async (page) => {
         try {
@@ -196,8 +271,8 @@ function Dashboard() {
     }
     return (
         <>
-
             <MKBox bgColor="white">
+
                 <MKBox
                     minHeight="25rem"
                     width="100%"
@@ -216,7 +291,7 @@ function Dashboard() {
                 <Card
                     sx={{
                         p: 2,
-                        mx: { xs: 2, lg: 3 },
+                        mx: { xs: 1, lg: 2 },
                         mt: -8,
                         mb: 4,
                         backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
@@ -224,175 +299,398 @@ function Dashboard() {
                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                     }}
                 >
-                    {/* <ProfileSection user={profile} /> */}
-                    <MKBox component="section" py={{ xs: 6, sm: 12 }}>
-                        <Container>
-                            <Grid container item xs={12} justifyContent="center" mx="auto">
-                                <MKBox mt={{ xs: -16, md: -20 }} textAlign="center">
-                                    <MKAvatar src={profilePicture} alt="Burce Mars" size="xxl" shadow="xl" />
-                                </MKBox>
-                                <Grid container justifyContent="center" py={6}>
-                                    <Grid item xs={12} md={7} mx={{ xs: "auto", sm: 6, md: 1 }}>
-                                        <MKBox display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                                            <MKTypography variant="h3">
-                                                {profile.name ?? "Pet Spa"}
 
-                                            </MKTypography>
-                                            <MKButton variant="outlined" color="info" size="small">
-                                                Follow
-                                            </MKButton>
-                                        </MKBox>
-                                        <Grid container spacing={3} mb={3}>
-                                            <Grid item>
-                                                <MKTypography component="span" variant="body2" color="text">
-                                                    {profile.email ?? "Email"}
-                                                </MKTypography>
-                                            </Grid>
-                                            <Grid item>
-                                                <MKTypography component="span" variant="body2" fontWeight="bold">
-                                                    Role: &nbsp;
-                                                </MKTypography>
-                                                <MKTypography component="span" variant="body2" color="text">
-                                                    {profile.role ? (profile.role === "USER" ? "User" : "Admin") : "Role"}
-                                                </MKTypography>
-                                            </Grid>
-                                            <Grid item>
-                                                <MKTypography component="span" variant="body2" fontWeight="bold">
-                                                    {petCount}&nbsp;
-                                                </MKTypography>
-                                                <MKTypography component="span" variant="body2" color="text">
-                                                    Pet{petCount !== 1 ? "s" : ""}
-                                                </MKTypography>
-                                            </Grid>
-                                        </Grid>
+                    <Container>
+                        <Grid container spacing={1} >
+                            <Grid item xs={12} lg={3} mt={1} >
+                                <AppBar position="static">
+                                    <Tabs
+                                        orientation="vertical"
+                                        value={activeTab}
+                                        onChange={handleTabType}
 
-                                    </Grid>
-                                </Grid>
+                                    >
+                                        <Tab label="Spa" />
+                                        <Tab label="Shop" />
+                                        <Tab label="Hotel" />
+                                        <Tab label="Pet Tag" />
+                                        <Tab label="Feedback" />
+                                        <Tab label="Users" />
+                                        <Tab label="App Settings" />
+                                    </Tabs>
+                                </AppBar>
                             </Grid>
-                            <CardContent>
-                                <Typography variant="h5" gutterBottom>
-                                    Spa Service Categories
-                                </Typography>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Category Name</TableCell>
-                                                <TableCell>Description</TableCell>
-                                                <TableCell>Image</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {categories.map((category) => (
-                                                <TableRow key={category.id}>
-                                                    <TableCell>{category.name}</TableCell>
-                                                    <TableCell>{category.description}</TableCell>
-                                                    <TableCell>
-                                                        <img src={category.imageUrl} alt={category.name} width="50" />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                             <Typography variant="h5" gutterBottom>
-                                    Spa Service
-                                </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Product Name</TableCell>
-                                            <TableCell>Price</TableCell>
-                                            <TableCell>Description</TableCell>
-                                            <TableCell>Image</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {products.map((product) => (
-                                            <TableRow key={product.id}>
-                                                <TableCell>{product.name}</TableCell>
-                                                <TableCell>{product.price}</TableCell>
-                                                <TableCell>{product.description}</TableCell>
-                                                <TableCell>
-                                                    <img src={product.imageUrl} alt={product.name} width="50" />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <Pagination
-                                count={totalPages}
-                                page={page + 1}
-                                onChange={handlePageChange}
-                                color="primary"
-                                sx={{ mt: 2 }}
-                            />
-                            <CardContent>
-                                <Typography variant="h5" gutterBottom>
-                                    Shop Product Categories
-                                </Typography>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                       
-                                        <TableBody>
-                                            {shopCategories.map((category) => (
-                                                <TableRow key={category.id}>
-                                                    <TableCell>{category.name}</TableCell>
-                                                    <TableCell>{category.description}</TableCell>
-                                                    
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                            <CardContent>
-                                <Typography variant="h5" gutterBottom>
-                                    Shop Products
-                                </Typography>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Product Name</TableCell>
-                                                <TableCell>Price</TableCell>
-                                                <TableCell>Description</TableCell>
-                                                <TableCell>Image</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {shopProducts.map((product) => (
-                                                <TableRow key={product.id}>
-                                                    <TableCell>{product.name}</TableCell>
-                                                    <TableCell>{product.price}</TableCell>
-                                                    <TableCell>{product.description}</TableCell>
-                                                    <TableCell>
-                                                        <img src={product.imageUrl} alt={product.name} width="50" />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                            <Pagination
-                                count={shopTotalPages}
-                                page={shopPage + 1}
-                                onChange={handleShopPageChange}
-                                color="primary"
-                                sx={{ mt: 2 }}
-                            />
-                        </Container>
+                            <Grid item xs={12} lg={9}>
+                                <Card
+                                    sx={{
+                                        p: 2,
+                                        mx: { xs: 1, lg: 2 },
+                                        mt: 1,
+                                        mb: 4,
+                                        backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
+                                        backdropFilter: "saturate(200%) blur(30px)",
+                                        boxShadow: ({ boxShadows: { xxl } }) => xxl,
+                                    }}
+                                >
 
+                                    {activeTab === 0 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                Spa Sevice Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabSpa} onChange={handleTabTypeSpa}>
+                                                            <Tab label="Categories" />
+                                                            <Tab label="Products" />
+                                                            <Tab label="Oders" />
+                                                            <Tab label="Chart" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabSpa === 0 && (
+                                                <CardContent>
 
-                    </MKBox>
+                                                    <Typography variant="h5" gutterBottom>
+                                                        Spa Service Categories
+                                                    </Typography>
+                                                    <TableContainer component={Paper}>
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Category Name</TableCell>
+                                                                    <TableCell>Description</TableCell>
+                                                                    <TableCell>Image</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {categories.map((category) => (
+                                                                    <TableRow key={category.id}>
+                                                                        <TableCell>{category.name}</TableCell>
+                                                                        <TableCell>{category.description}</TableCell>
+                                                                        <TableCell>
+                                                                            <img src={category.imageUrl} alt={category.name} width="50" />
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                </CardContent>
+                                            )}
+                                            {activeTabSpa === 1 && (
+                                                <CardContent>
+                                                    <Typography variant="h5" gutterBottom>
+                                                        Spa Service
+                                                    </Typography>
+                                                    <TableContainer component={Paper}>
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Product Name</TableCell>
+                                                                    <TableCell>Price</TableCell>
+                                                                    <TableCell>Description</TableCell>
+                                                                    <TableCell>Image</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {products.map((product) => (
+                                                                    <TableRow key={product.id}>
+                                                                        <TableCell>{product.name}</TableCell>
+                                                                        <TableCell>{product.price}</TableCell>
+                                                                        <TableCell>{product.description}</TableCell>
+                                                                        <TableCell>
+                                                                            <img src={product.imageUrl} alt={product.name} width="50" />
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                    <Pagination
+                                                        count={totalPages}
+                                                        page={page + 1}
+                                                        onChange={handlePageChange}
+                                                        color="primary"
+                                                        sx={{ mt: 2 }}
+                                                    />
+                                                </CardContent>
+                                            )}
+                                            {activeTabSpa === 2 && (
+                                                <>
+                                                    Order
+                                                </>
+                                            )}
+                                            {activeTabSpa === 3 && (
+                                                <>
+                                                    Chart
+                                                </>
+                                            )}
+                                        </>
+
+                                    )}
+                                    {activeTab === 1 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                Shop Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabShop} onChange={handleTabTypeShop}>
+                                                            <Tab label="Categories" />
+                                                            <Tab label="Products" />
+                                                            <Tab label="Orders" />
+                                                            <Tab label="Chart" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabShop === 0 && (
+                                                <CardContent>
+                                                    <Typography variant="h5" gutterBottom>
+                                                        Shop Product Categories
+                                                    </Typography>
+                                                    <TableContainer component={Paper}>
+                                                        <Table>
+                                                            <TableBody>
+                                                                {shopCategories.map((category) => (
+                                                                    <TableRow key={category.id}>
+                                                                        <TableCell>{category.name}</TableCell>
+                                                                        <TableCell>{category.description}</TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                </CardContent>
+                                            )}
+                                            {activeTabShop === 1 && (
+                                                <CardContent>
+                                                    <Typography variant="h5" gutterBottom>
+                                                        Shop Products
+                                                    </Typography>
+                                                    <TableContainer component={Paper}>
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Product Name</TableCell>
+                                                                    <TableCell>Price</TableCell>
+                                                                    <TableCell>Description</TableCell>
+                                                                    <TableCell>Image</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {shopProducts.map((product) => (
+                                                                    <TableRow key={product.id}>
+                                                                        <TableCell>{product.name}</TableCell>
+                                                                        <TableCell>{product.price}</TableCell>
+                                                                        <TableCell>{product.description}</TableCell>
+                                                                        <TableCell>
+                                                                            <img src={product.imageUrl} alt={product.name} width="50" />
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                    <Pagination
+                                                        count={shopTotalPages}
+                                                        page={shopPage + 1}
+                                                        onChange={handleShopPageChange}
+                                                        color="primary"
+                                                        sx={{ mt: 2 }}
+                                                    />
+                                                </CardContent>
+                                            )}
+                                            {activeTabShop === 2 && (
+                                                <>
+                                                    Order
+                                                </>
+                                            )}
+                                            {activeTabShop === 3 && (
+                                                <>
+                                                    Chart
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {activeTab === 2 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                Hotel Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabHotel} onChange={handleTabTypeHotel}>
+                                                            <Tab label="Categories" />
+                                                            <Tab label="Rooms" />
+                                                            <Tab label="Bookings" />
+                                                            <Tab label="Chart" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabHotel === 0 && (
+                                                <>
+                                                    Hotel Categories
+                                                </>
+                                            )}
+                                            {activeTabHotel === 1 && (
+                                                <>
+                                                    Hotel Rooms
+                                                </>
+                                            )}
+                                            {activeTabHotel === 2 && (
+                                                <>
+                                                    Hotel Bookings
+                                                </>
+                                            )}
+                                            {activeTabHotel === 3 && (
+                                                <>
+                                                    Hotel Chart
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {activeTab === 3 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                Pet Tag Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabPetTag} onChange={handleTabTypePetTag}>
+                                                            <Tab label="Categories" />
+                                                            <Tab label="Tags" />
+                                                            <Tab label="Orders" />
+                                                            <Tab label="Chart" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabPetTag === 0 && (
+                                                <>
+                                                    Pet Tag Categories
+                                                </>
+                                            )}
+                                            {activeTabPetTag === 1 && (
+                                                <>
+                                                    Pet Tags
+                                                </>
+                                            )}
+                                            {activeTabPetTag === 2 && (
+                                                <>
+                                                    Pet Tag Orders
+                                                </>
+                                            )}
+                                            {activeTabPetTag === 3 && (
+                                                <>
+                                                    Pet Tag Chart
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {activeTab === 4 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                Feedback Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabFeedback} onChange={handleTabTypeFeedback}>
+                                                            <Tab label="Feedback List" />
+                                                            <Tab label="Feedback Chart" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabFeedback === 0 && (
+                                                <>
+                                                    Feedback List
+                                                </>
+                                            )}
+                                            {activeTabFeedback === 1 && (
+                                                <>
+                                                    Feedback Chart
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {activeTab === 5 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                User Management
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabUsers} onChange={handleTabTypeUsers}>
+                                                            <Tab label="User List" />
+                                                            <Tab label="User Roles" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabUsers === 0 && (
+                                                <>
+                                                    User List
+                                                </>
+                                            )}
+                                            {activeTabUsers === 1 && (
+                                                <>
+                                                    User Roles
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {activeTab === 6 && (
+                                        <>
+                                            <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
+                                                App Settings
+                                            </MKTypography>
+                                            <Container>
+                                                <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
+                                                    <AppBar position="static">
+                                                        <Tabs value={activeTabAppSettings} onChange={handleTabTypeAppSettings}>
+                                                            <Tab label="Work Days" />
+                                                            <Tab label="Work Hours" />
+                                                            <Tab label="Rest Day" />
+                                                        </Tabs>
+                                                    </AppBar>
+                                                </Grid>
+                                            </Container>
+                                            {activeTabAppSettings === 0 && (
+                                                <>
+                                                    Work Days
+                                                </>
+                                            )}
+                                            {activeTabAppSettings === 1 && (
+                                                <>
+                                                    Work Hours
+                                                </>
+                                            )}
+                                            {activeTabAppSettings === 2 && (
+                                                <>
+                                                    Rest Day
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    </Container>
 
                 </Card>
-
             </MKBox>
+
         </>
     );
 }

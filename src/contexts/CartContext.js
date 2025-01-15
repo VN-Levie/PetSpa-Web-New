@@ -15,19 +15,23 @@ export const CartProvider = ({ children }) => {
     }, [cart]);
 
     // Hàm thêm sản phẩm vào giỏ hàng
-    const addToCart = (product) => {
+    const addToCart = (product, quantity = 1) => {
         setCart((prev) => {
             const existingProduct = prev.find((item) => item.id === product.id);
             if (existingProduct) {
+                // Tăng số lượng nếu sản phẩm đã tồn tại
                 return prev.map((item) =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + product.quantity } : item
+                    item.id === product.id
+                        ? { ...item, quantity: Math.max(item.quantity + quantity, 1) } // Đảm bảo số lượng không nhỏ hơn 1
+                        : item
                 );
             }
-            if (product.quantity === undefined) product.quantity = 1;
-            if (product.quantity < 1) product.quantity = 1;
-            return [...prev, product];
+
+            // Thêm sản phẩm mới vào giỏ hàng, đảm bảo số lượng >= 1
+            return [...prev, { ...product, quantity: Math.max(quantity, 1) }];
         });
     };
+
 
     // Hàm cập nhật số lượng sản phẩm trong giỏ hàng
     const updateQuantity = (productId, quantity) => {

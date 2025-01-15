@@ -96,9 +96,11 @@ export const getRoutes = (user) => {
 
   const authRoutes = user
     ? [
-      { name: "sign out", route: "/auth/sign-out", component: <SignOut /> },
       { name: "profile", route: "/auth/profile", component: <Profile /> },
-      { name: "dashboard", route: "/auth/dashboard", component: <Dashboard /> },
+      ...(user.role === "Admin" || user.role === "ADMIN"
+        ? [{ name: "dashboard", route: "/auth/dashboard", component: <Dashboard /> }]
+        : []),
+      { name: "sign out", route: "/auth/sign-out", component: <SignOut /> },
     ]
     : [
       { name: "sign in", route: "/auth/sign-in", component: <SignIn /> },
