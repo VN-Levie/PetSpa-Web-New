@@ -77,6 +77,8 @@ const ReviewAndConfirmOrder = () => {
                 formData2.append("ip", ip);
                 const response2 = await post("/api/payment/create-payment", formData2, true);
                 if (response2.data.status === 200) {
+                    clearCart();
+                    window.history.replaceState({}, document.title);
                     console.log("Payment gate url:", response2.data.data);
                     window.location.href = response2.data.data; // Redirect to the payment URL
                 }

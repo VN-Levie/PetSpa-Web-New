@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { get } from 'services/apiService';
 import PetManager from "./sections/PetManager";
 import BookAddress from "./sections/BookAddress";
+import UserOrder from "./sections/UserOrder";
 
 function Author() {
 
@@ -180,6 +181,7 @@ function Author() {
                         </Container>
                         <PetManager profile={profile} petCount={petCount} onCountChange={handlePetCountChange} />
                         <BookAddress profile={profile}/>
+                        <UserOrder />
 
                     </MKBox>
 

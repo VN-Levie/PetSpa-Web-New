@@ -18,6 +18,7 @@ import ProductDetail from "pages/ProductDetail";
 import { CartProvider } from "contexts/CartContext";
 import ProductCheckout from "pages/ProductCheckout";
 import Payment from "pages/Payment";
+import UserOrderDetail from "pages/Auth/sections/UserOrderDetail";
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ function AppRoutes() {
         {mapRoutes(routes)}
         <Route path="/payment/vnpay_ipn" element={<Payment />} />
         <Route path="/cat/:catId/service/:serviceId" element={<ServiceDetail />} />
+        <Route path="/auth/profile/user-order-detail/:orderId" element={<UserOrderDetail />} />
         <Route path="/product/:productId" element={<ProductDetail />} />
         <Route path="/cart" element={<CartDetail />} />
         <Route path="/product-checkout" element={<ProductCheckout />} />
