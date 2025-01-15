@@ -339,7 +339,7 @@ function Dashboard() {
                                         boxShadow: ({ boxShadows: { xxl } }) => xxl,
                                     }}
                                 >
-                                    <Suspense fallback={<CircularProgress />}>
+                                    <Suspense fallback={<CircularProgress size={24} style={{ margin: "auto", display: "block" }} />}>
                                         {activeTab === 0 && <SpaManagement />}
                                         {activeTab === 1 && <ShopManagement />}
                                         {activeTab === 2 && <HotelManagement />}

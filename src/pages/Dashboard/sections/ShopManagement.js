@@ -77,7 +77,13 @@ function ShopManagement() {
     const handleShopPageChange = (event, value) => {
         setShopPage(value - 1);
     };
-
+    if (shopLoading) {
+        return (
+            <MKBox display="flex" justifyContent="center" alignItems="center" height="50vh">
+                <CircularProgress />
+            </MKBox>
+        );
+    }
     return (
         <>
             <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
@@ -95,81 +101,77 @@ function ShopManagement() {
                     </AppBar>
                 </Grid>
             </Container>
-            {shopLoading ? (
-                <MKBox display="flex" justifyContent="center" alignItems="center" height="50vh">
-                    <CircularProgress />
-                </MKBox>
-            ) : (
-                <>
-                    {activeTabShop === 0 && (
-                        <CardContent>
-                            <Typography variant="h5" gutterBottom>
-                                Shop Product Categories
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableBody>
-                                        {shopCategories.map((category) => (
-                                            <TableRow key={category.id}>
-                                                <TableCell>{category.name}</TableCell>
-                                                <TableCell>{category.description}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </CardContent>
-                    )}
-                    {activeTabShop === 1 && (
-                        <CardContent>
-                            <Typography variant="h5" gutterBottom>
-                                Shop Products
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Product Name</TableCell>
-                                            <TableCell>Price</TableCell>
-                                            <TableCell>Description</TableCell>
-                                            <TableCell>Image</TableCell>
+
+            <>
+                {activeTabShop === 0 && (
+                    <CardContent>
+                        <Typography variant="h5" gutterBottom>
+                            Shop Product Categories
+                        </Typography>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableBody>
+                                    {shopCategories.map((category) => (
+                                        <TableRow key={category.id}>
+                                            <TableCell>{category.name}</TableCell>
+                                            <TableCell>{category.description}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {shopProducts.map((product) => (
-                                            <TableRow key={product.id}>
-                                                <TableCell>{product.name}</TableCell>
-                                                <TableCell>{product.price}</TableCell>
-                                                <TableCell>{product.description}</TableCell>
-                                                <TableCell>
-                                                    <img src={product.imageUrl} alt={product.name} width="50" />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <Pagination
-                                count={shopTotalPages}
-                                page={shopPage + 1}
-                                onChange={handleShopPageChange}
-                                color="primary"
-                                sx={{ mt: 2 }}
-                            />
-                        </CardContent>
-                    )}
-                    {activeTabShop === 2 && (
-                        <>
-                            Order
-                        </>
-                    )}
-                    {activeTabShop === 3 && (
-                        <>
-                            Chart
-                        </>
-                    )}
-                </>
-            )}
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardContent>
+                )}
+                {activeTabShop === 1 && (
+                    <CardContent>
+                        <Typography variant="h5" gutterBottom>
+                            Shop Products
+                        </Typography>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Product Name</TableCell>
+                                        <TableCell>Price</TableCell>
+                                        <TableCell>Description</TableCell>
+                                        <TableCell>Image</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {shopProducts.map((product) => (
+                                        <TableRow key={product.id}>
+                                            <TableCell>{product.name}</TableCell>
+                                            <TableCell>{product.price}</TableCell>
+                                            <TableCell>{product.description}</TableCell>
+                                            <TableCell>
+                                                <img src={product.imageUrl} alt={product.name} width="50" />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Pagination
+                            count={shopTotalPages}
+                            page={shopPage + 1}
+                            onChange={handleShopPageChange}
+                            color="primary"
+                            sx={{ mt: 2 }}
+                        />
+                    </CardContent>
+                )}
+                {activeTabShop === 2 && (
+                    <>
+                        Order
+                    </>
+                )}
+                {activeTabShop === 3 && (
+                    <>
+                        Chart
+                    </>
+                )}
+            </>
+
         </>
     );
 }
