@@ -69,7 +69,7 @@ function Presentation() {
       >
         <Counters />
         <ServiceBlocks />
-        <Pages />
+        {/* <Pages /> */}
 
 
 

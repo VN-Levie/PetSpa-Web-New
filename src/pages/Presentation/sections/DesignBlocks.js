@@ -68,7 +68,7 @@ function ServiceBlocks() {
       <Grid item xs={12} lg={3}>
         <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
           <MKTypography variant="h3" fontWeight="bold" mb={1}>
-            {title} - {catId}
+            {title}
           </MKTypography>
           <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
             {description}
@@ -81,7 +81,7 @@ function ServiceBlocks() {
             return (
               <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
                 <MKBox onClick={() => handleOpenModal(catId, serviceId)}>
-                  <ExampleCard image={image} name={name + serviceId} description={description} />
+                  <ExampleCard image={image} name={name} description={description} />
                 </MKBox>
               </Grid>
             );
