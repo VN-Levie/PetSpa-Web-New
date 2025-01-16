@@ -36,9 +36,11 @@ function ServiceDetail({ open, onClose, catId, serviceId }) {
                     setServiceData(response.data.data);
                 } else {
                     console.error("Failed to fetch data");
+                    // setError("Failed to fetch data");
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+                // setError("Failed to fetch data");
             }
         };
 

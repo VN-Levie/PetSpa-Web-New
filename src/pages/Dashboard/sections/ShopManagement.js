@@ -56,6 +56,8 @@ function ShopManagement() {
     const [confirmButtonDisabled, setConfirmButtonDisabled] = useState(false);
     const [confirmButtonCountdown, setConfirmButtonCountdown] = useState(5);
     const [searchParams, setSearchParams] = useState({ name: "", categoryId: "" });
+    const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
+    const [currentCategory, setCurrentCategory] = useState(null);
     const handleTabTypeShop = (event, newValue) => {
         setActiveTabShop(newValue);
         localStorage.setItem('activeTabShop', newValue);
@@ -368,6 +370,93 @@ function ShopManagement() {
         return description.substring(0, maxLength) + '...';
     };
 
+    const handleAddEditCategory = (category = null) => {
+        //clear form
+        reset();
+        setCurrentCategory(category);
+        setOpenCategoryDialog(true);
+    };
+
+    const handleCategoryDialogClose = () => {
+        setOpenCategoryDialog(false);
+        setCurrentCategory(null);
+    };
+
+    const handleCategoryDialogSubmit = async (data) => {
+        Swal.showLoading();
+        const formData = new FormData();
+        const categoryDTO = {
+            name: data.name,
+            description: data.description,
+            deleted: false
+        };
+        if (currentCategory) {
+            categoryDTO.id = currentCategory.id;
+            categoryDTO.deleted = currentCategory.deleted;
+        }
+        formData.append("categoryDTO", JSON.stringify(categoryDTO));
+        try {
+            const response = await post(`/api/admin/shop-product/category/${currentCategory ? 'update' : 'add'}`, formData, true);
+            if (response.data.status === 200) {
+                Swal.fire("Success!", currentCategory ? "Category edited successfully" : "Category added successfully", "success");
+                fetchShopCategories();
+                handleCategoryDialogClose();
+            } else {
+                Swal.fire("Error!", response.data.message, "error");
+            }
+        } catch (error) {
+            const message = error.response?.data?.message ?? "There was an error submitting the category.";
+            Swal.fire("Error!", message, "error");
+        }
+    };
+
+    const handleToggleCategoryVisibility = (category) => {
+        (async () => {
+            const action = category.deleted ? 'SHOW' : 'HIDE';
+            const step1 = await Queue.fire({
+                title: 'Are you sure?',
+                html: `This action will <strong>${action}</strong> the category in the SHOP.  <br>And <strong>ALL</strong> products in this category will be <strong>ALSO</strong> take action.`,
+                icon: 'warning',
+                showCancelButton: true,
+                currentProgressStep: 0,
+            });
+
+            if (step1.isConfirmed) {
+                const step2 = await Queue.fire({
+                    title: `Confirm to ${action} it?`,
+                    text: `Are you sure you want to ${action} this category?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    currentProgressStep: 1,
+                });
+
+                if (step2.isConfirmed) {
+                    try {
+                        const formData = new FormData();
+                        const categoryDTO = {
+                            id: category.id,
+                            name: category.name,
+                            description: category.description,
+                            deleted: category.deleted
+                        };
+                        formData.append("categoryDTO", JSON.stringify(categoryDTO));
+                        const response = await post(`/api/admin/shop-product/category/delete`, formData, true);
+                        if (response.data.status === 200) {
+                            Swal.fire(`${action.charAt(0).toUpperCase() + action.slice(1)}d!`, `The category has been ${action}d.`, 'success');
+                            fetchShopCategories();
+                        } else {
+                            Swal.fire('Error!', response.data.message, 'error');
+                        }
+                    } catch (error) {
+                        const message = error.response?.data?.message ?? `There was an error ${action}ing the category.`;
+                        Swal.fire('Error!', message, 'error');
+                    }
+                }
+            }
+        })();
+    };
+
     return (
         <>
             <MKTypography container variant="h3" align="center" sx={{ mt: 1, mb: 2 }}>
@@ -392,6 +481,7 @@ function ShopManagement() {
                         <Typography variant="h5" gutterBottom>
                             Shop Product Categories
                         </Typography>
+                        <MKButton onClick={() => handleAddEditCategory()} color="primary">Add Category</MKButton>
                         <TableContainer component={Paper}>
                             <Table>
                                 <TableBody>
@@ -399,6 +489,12 @@ function ShopManagement() {
                                         <TableRow key={category.id}>
                                             <TableCell>{category.name}</TableCell>
                                             <TableCell>{category.description}</TableCell>
+                                            <TableCell align="right">
+                                                <MKButton onClick={() => handleAddEditCategory(category)} color="warning" size="small">Edit</MKButton>
+                                                <MKButton onClick={() => handleToggleCategoryVisibility(category)} color={category.deleted ? "success" : "error"} size="small">
+                                                    {category.deleted ? "Show" : "Hide"}
+                                                </MKButton>
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -615,6 +711,35 @@ function ShopManagement() {
                 <DialogActions>
                     <Button onClick={handleDialogClose} color="secondary">Cancel</Button>
                     <Button onClick={handleSubmit(handleDialogSubmit)} color="primary">{currentProduct ? "Save" : "Add"}</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openCategoryDialog} onClose={handleCategoryDialogClose} sx={{ zIndex: 999 }}>
+                <DialogTitle>{currentCategory ? "Edit Category" : "Add Category"}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        {...register("name")}
+                        id="categoryName"
+                        label="Category Name"
+                        fullWidth
+                        margin="normal"
+                        required
+                        defaultValue={currentCategory?.name || ""}
+                    />
+                    <TextField
+                        {...register("description")}
+                        id="categoryDescription"
+                        label="Description"
+                        fullWidth
+                        margin="normal"
+                        defaultValue={currentCategory?.description || ""}
+                        multiline
+                        required
+                        rows={3}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCategoryDialogClose} color="secondary">Cancel</Button>
+                    <Button onClick={handleSubmit(handleCategoryDialogSubmit)} color="primary">{currentCategory ? "Save" : "Add"}</Button>
                 </DialogActions>
             </Dialog>
         </>
