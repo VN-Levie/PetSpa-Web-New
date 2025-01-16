@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, Typography, Card, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Container, Grid, Typography, Card, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
 import { get, post } from 'services/apiService';
@@ -9,9 +9,11 @@ import { useNavigate } from "react-router-dom";
 const UserOrder = () => {
     const [orders, setOrders] = useState([]);
     const [goodsType, setGoodsType] = useState("SHOP");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const loadOrders = async () => {
+        setLoading(true);
         try {
             const response = await get(`/api/user-order/list?page=0&size=10&goodsType=${goodsType}`, {}, true);
             if (response.data.status === 200) {
@@ -21,6 +23,8 @@ const UserOrder = () => {
             }
         } catch (error) {
             console.error("Error loading orders:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -100,29 +104,30 @@ const UserOrder = () => {
                                     </Select>
 
                                 </Grid>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                       
-                                        <TableBody>
-                                            {orders.map((order) => (
-                                                <TableRow key={order.id}>
-                                                    <TableCell>{order.id}</TableCell>
-                                                    <TableCell>Type: {order.goodsType}</TableCell>
-                                                    <TableCell>{order.totalPrice}</TableCell>
-                                                    <TableCell>{order.status}</TableCell>
-                                                    <TableCell>{order.updatedAt}</TableCell>
-                                                    <TableCell>                                                   
-                                                        <MKButton variant="outlined" color="info" onClick={() => handleViewDetail(order.id)}>View Detail</MKButton>
-                                                        {/* {order.status === "PENDING" && (
-                                                            <button onClick={() => handleContinuePayment(order.id)}>Continue Payment</button>
-                                                        )}
-                                                        <button onClick={() => handleCancelOrder(order.id)}>Cancel Order</button> */}
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                {loading ? (
+                                    <MKBox display="flex" justifyContent="center" alignItems="center" height="50vh">
+                                        <CircularProgress />
+                                    </MKBox>
+                                ) : (
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableBody>
+                                                {orders.map((order) => (
+                                                    <TableRow key={order.id}>
+                                                        <TableCell>{order.id}</TableCell>
+                                                        <TableCell>Type: {order.goodsType}</TableCell>
+                                                        <TableCell>{order.totalPrice}</TableCell>
+                                                        <TableCell>{order.status}</TableCell>
+                                                        <TableCell>{order.updatedAt}</TableCell>
+                                                        <TableCell>                                                   
+                                                            <MKButton variant="outlined" color="info" onClick={() => handleViewDetail(order.id)}>View Detail</MKButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                )}
                             </MKBox>
                         </Grid>
                     </Grid>
