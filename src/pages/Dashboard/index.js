@@ -35,8 +35,6 @@ import MKButton from "components/MKButton";
 import MKTypography from "components/MKTypography";
 import { useNavigate } from "react-router-dom";
 import { get } from 'services/apiService';
-const PetManager = lazy(() => import("./sections/PetManager"));
-const BookAddress = lazy(() => import("./sections/BookAddress"));
 const SpaManagement = lazy(() => import("./sections/SpaManagement"));
 const ShopManagement = lazy(() => import("./sections/ShopManagement"));
 const HotelManagement = lazy(() => import("./sections/HotelManagement"));
@@ -180,13 +178,14 @@ function Dashboard() {
                                         onChange={handleTabType}
 
                                     >
-                                        <Tab label="Spa" />
-                                        <Tab label="Shop" />
-                                        <Tab label="Hotel" />
-                                        <Tab label="Pet Tag" />
-                                        <Tab label="Feedback" />
-                                        <Tab label="Users" />
-                                        <Tab label="App Settings" />
+                                        <Tab label="Spa" /> {/* 0 */}
+                                        <Tab label="Shop" /> {/* 1 */}
+                                        <Tab label="Hotel" /> {/* 2 */}
+                                        {/* <Tab label="Pet Tag" /> */} {/* 3 */}
+                                        {/* <Tab label="Feedback" /> */} {/* 4 */}
+                                        <Tab label="Users" /> {/* 5 -> 3 */}
+                                        <Tab label="Order" /> {/* 6 -> 4 */}
+                                        <Tab label="App Settings" /> {/* 7 -> 5 */}
                                     </Tabs>
                                 </AppBar>
                             </Grid>
@@ -206,10 +205,11 @@ function Dashboard() {
                                         {activeTab === 0 && <SpaManagement />}
                                         {activeTab === 1 && <ShopManagement />}
                                         {activeTab === 2 && <HotelManagement />}
-                                        {activeTab === 3 && <PetTagManagement />}
-                                        {activeTab === 4 && <FeedbackManagement />}
-                                        {activeTab === 5 && <UserManagement />}
-                                        {activeTab === 6 && <AppSettingsManagement />}
+                                        {/* {activeTab === 3 && <PetTagManagement />} */}
+                                        {/* {activeTab === 4 && <FeedbackManagement />} */}
+                                        {activeTab === 3 && <UserManagement />}
+                                        {/* {activeTab === 4 && <UserManagement />} */}
+                                        {activeTab === 5 && <AppSettingsManagement />}
                                     </Suspense>
                                 </Card>
                             </Grid>

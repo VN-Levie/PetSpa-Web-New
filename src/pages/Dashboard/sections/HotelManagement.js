@@ -31,10 +31,9 @@ function HotelManagement() {
                 <Grid container item justifyContent="center" xs={12} lg={8} mx="auto">
                     <AppBar position="static">
                         <Tabs value={activeTabHotel} onChange={handleTabTypeHotel}>
-                            <Tab label="Categories" />
                             <Tab label="Rooms" />
-                            <Tab label="Bookings" />
-                            <Tab label="Chart" />
+                            <Tab label="Room Types" />
+
                         </Tabs>
                     </AppBar>
                 </Grid>

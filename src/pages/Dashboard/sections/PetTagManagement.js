@@ -33,8 +33,8 @@ function PetTagManagement() {
                         <Tabs value={activeTabPetTag} onChange={handleTabTypePetTag}>
                             <Tab label="Categories" />
                             <Tab label="Tags" />
-                            <Tab label="Orders" />
-                            <Tab label="Chart" />
+                            {/* <Tab label="Orders" />
+                            <Tab label="Chart" /> */}
                         </Tabs>
                     </AppBar>
                 </Grid>
