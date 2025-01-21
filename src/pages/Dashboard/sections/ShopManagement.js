@@ -468,8 +468,8 @@ function ShopManagement() {
                         <Tabs value={activeTabShop} onChange={handleTabTypeShop}>
                             <Tab label="Categories" />
                             <Tab label="Products" />
-                            {/* <Tab label="Orders" />
-                            <Tab label="Chart" /> */}
+                            <Tab label="Orders" />
+                            <Tab label="Chart" />
                         </Tabs>
                     </AppBar>
                 </Grid>
